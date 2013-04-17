@@ -24,6 +24,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.enable('trust proxy');
 
 // development only
 if ('development' == app.get('env')) {
