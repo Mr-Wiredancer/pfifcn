@@ -1,4 +1,4 @@
-player = io.connect("localhost")
+player = io.connect(document.domain)
 
 player.on("connect", ->
   player.on("message", (data) -> console.log "message: "+data )
