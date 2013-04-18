@@ -43,9 +43,7 @@ io.sockets.on "connection", (socket) ->
   0
   
 createGame = ->
-  gameHost = fork "public/js/worker.js"
   for player in joinedSockets
-    console.log player.constructor.toString()
-    gameHost.send "socket", player
+    player.send "game starts!"
   joinedSockets = []
   0

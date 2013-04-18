@@ -72,13 +72,11 @@ io.sockets.on("connection", function(socket) {
 });
 
 createGame = function() {
-  var gameHost, player, _i, _len;
+  var player, _i, _len;
 
-  gameHost = fork("public/js/worker.js");
   for (_i = 0, _len = joinedSockets.length; _i < _len; _i++) {
     player = joinedSockets[_i];
-    console.log(player.constructor.toString());
-    gameHost.send("socket", player);
+    player.send("game starts!");
   }
   joinedSockets = [];
   return 0;
