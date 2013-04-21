@@ -56,28 +56,19 @@ server.listen(app.get("port"), function() {
   return 0;
 });
 
-joinedSockets = [];
-
 io.sockets.on("connection", function(socket) {
   socket.send("hello from the game server");
-  joinedSockets.push(socket);
-  socket.on("debug", function(data) {
-    socket.emit("debug", data);
-    return 0;
+  socket.on("search", function(data) {
+    socket.emit("searchResult", getSearchResult(validate(data)));
   });
-  if (joinedSockets.length === 4) {
-    createGame();
-  }
-  return 0;
 });
 
-createGame = function() {
-  var player, _i, _len;
+//doesn't do anything noww
+function getSearchResult(query){
+  return "searhc result of: "+query;
+}
 
-  for (_i = 0, _len = joinedSockets.length; _i < _len; _i++) {
-    player = joinedSockets[_i];
-    player.send("game starts!");
-  }
-  joinedSockets = [];
-  return 0;
-};
+//doesn't do anything now
+function validate(data){
+  return data;
+}
