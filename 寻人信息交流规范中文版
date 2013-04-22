@@ -129,63 +129,102 @@ Metadata about the record itself (9 fields)
 This metadata is necessary to enable users of the data to trace and ascertain its reliability.
 person_record_id (ASCII string, required)
 人员记录id (ASCII 字符串，必须)
-Unique identifier for this record, which consists of a lowercase ASCII domain name followed by a slash and a local identifier. The domain name identifies this record's original repository, which is the authority for this record. The format of the local identifier is up to the original repository. When the person_record_id begins with a domain other than the application's own domain, it means this record is a clone record.
+Unique identifier for this record, which consists of a lowercase ASCII domain name followed by a slash and a local identifier. 
 该记录的唯一识别符, 包含了一个小写的ASCII域名，后面紧跟一个"/"和一个本地的识别符。
+The domain name identifies this record's original repository, which is the authority for this record. 
+该域名标识了此记录的原始（地址），而这个原始地址就是这个记录的authority. 
+The format of the local identifier is up to the original repository. When the person_record_id begins with a domain other than the application's own domain, it means this record is a clone record.
+本地识别符的格式取决于原始地址。当person_record_id以一个不同于应用本身域名的域名开时，这标识该记录是一个克隆记录。
 entry_date (ASCII string in the form "yyyy-mm-ddThh:mm:ssZ", optional):
+录入时间("年年年年-月月-日日T时时-分分-秒秒Z"格式的ASCII字符串，可选)：
 Date in UTC that this copy of this record was stored (see Incremental export mechanism above).
+UTC格式的日期，表示该记录副本被存储的时间。（见上面的叠加式输出机制）
 expiry_date (ASCII string in the form "yyyy-mm-ddThh:mm:ssZ", optional):
+失效日期
 Date in UTC after which this record should be deleted (see Data expiry mechanism above).
 author_name (Unicode string, optional):
+作者姓名
 The full name of the person who entered this record.
 author_email (e-mail address string, optional):
+作者电子邮箱
 The preferred contact e-mail address of the person who entered this record.
 author_phone (ASCII string, optional):
+作者电话
 The preferred contact phone number of the person who entered this record.
 source_name (Unicode string, optional):
+来源名称
 The human-readable name of the original repository of this record.
+该记录的原始目录的名字
 source_date (ASCII string in the form "yyyy-mm-ddThh:mm:ssZ", required):
+来源日期
 The date in UTC that the original copy of this record was created in its original repository.
+改记录原始副本在其原始目录被创建的时间，UTC格式。
 source_url (URL string, optional):
+来源URL
 The URL to this record in its original repository (as specific as possible, down to the URL of the individual record).
+该记录在其原始目录中的URL地址
 Identifying information about a missing person (16 fields)
 
 These fields contain information that is used to identify a person; this is information that is not expected to change unless it is incorrect. Searches for PERSON records should search over these fields.
 full_name (Unicode string, required):
+全名
 The full name of the person sought or found, combined in the order and fashion customary to the person, language, and culture. For example, a typical English name would be formatted as a first, middle, and last name with spaces between them, whereas a typical Chinese name would be formatted with the family name first and no spaces between characters. If the person has more than one full name (for example, both an English name and a Chinese name), begin with the most commonly used full name and use newline (Unicode U+000A) characters to separate the full names.
 given_name (Unicode string, optional):
+名
 Given name of the person sought or found, optionally followed by a space and any middle names or middle initials.
 family_name (Unicode string, optional):
+姓
 Family name of the person sought or found.
 alternate_names (Unicode string, optional):
 Any other names associated with the person that are not part of the person's usual full name, such as nicknames, alternate spellings, and transliterations. For example, hiragana readings of Japanese kanji could go in this field. Use newline (Unicode U+000A) characters to separate names.
 description (Unicode string, optional):
 Description of the person in free-form text. In entry forms, a multi-line text box is appropriate for this field.
 sex (ASCII string, optional):
+性别
 Physical sex of the person sought or found, specified as one of the three strings female, male, or other. If the sex is unknown, omit this field.
 date_of_birth (ASCII string in the form "yyyy", "yyyy-mm", or "yyyy-mm-dd", optional):
+出生日期
 Exact or approximate date of birth of the person sought or found.
 age (integer, or ASCII string in the form "min-max", optional):
+年龄
 Approximate age of the person sought or found, in years since birth as of the source_date of this record. The value of this field is either a single decimal integer or an inclusive range given as two decimal integers separated by a hyphen. This field has no defined meaning when source_date is missing.
 home_street (Unicode string, optional):
+居住地址
 Street name of the home address of the person sought or found. To protect user privacy, applications should generally avoid including a street number in this field.
 home_neighborhood (Unicode string, optional):
 Name of the home neighborhood of the person sought or found. Use this field for the names of official or unofficial geographic regions not captured by the other address fields.
 home_city (Unicode string, optional):
+居住城市
 Home city of the person sought or found.
 home_state (Unicode string, optional):
+居住省份
 Home state, province, territory, district, region, parish, county, or department of the person sought or found, specified as an uppercase ISO 3166-2 code (preferred) or by its name.
 home_postal_code (ASCII string, optional):
 Postal code of the home address of the person sought or found, in the format most commonly used in the country.
 home_country (ASCII ISO-3166-1 country code, optional):
+居住国家
 Home country of the person sought or found, specified as an uppercase two-letter ISO-3166-1 country code.
 photo_url (URL string, optional):
+照片的URL地址
 URL to an image of an identifying photograph of the person sought or found.
 profile_urls (URL string, optional):
 URLs to the person's profile pages on other websites. Use newline (Unicode U+000A) characters to separate URLs.
 4.2. NOTE records
 
-Each NOTE record belongs to exactly one PERSON record. There may be any number of NOTE records associated with a particular PERSON record. (See below for implementation notes. A database might implement this by including a foreign key, person_record_id, that refers to the PERSON record. An object-oriented representation might implement this by embedding a list of NOTE objects within the PERSON object.)
-NOTE records are used to provide updated, current information on a missing person. Every note has a timestamp and information on the author of the note. Applications can use the timestamp to determine the most recent value of a given field. Users can use the author information to ascertain the reliabiliy of a given field.
+Each NOTE record belongs to exactly one PERSON record. 
+每一个NOTE记录都严格属于一个PERSON记录。
+There may be any number of NOTE records associated with a particular PERSON record. 
+可有多个NOTE记录与一个特定的PERSON记录产生关联
+(See below for implementation notes. A database might implement this by including a foreign key, person_record_id, that refers to the PERSON record. An object-oriented representation might implement this by embedding a list of NOTE objects within the PERSON object.)
+（见下面的实现提示。一个可能的数据库实现包含一个foreign key(外键), person_record_id(指向一个特定的PERSON记录)。一个可能的面向对象实现是在PERSON对象中包含的NOTE对象的列表 ）
+
+NOTE records are used to provide updated, current information on a missing person. 
+NOTE记录被用来提供失踪人员的更新信息。
+
+Every note has a timestamp and information on the author of the note. Applications can use the timestamp to determine the most recent value of a given field. 
+每一个NOTE记录有一个时间戳以及该记录的作者信息。不同的应用可以使用时间戳来决定一个给定field的最新值。
+Users can use the author information to ascertain the reliabiliy of a given field.
+用户可以使用作者信息来保证给定field的可靠性。
 Metadata about the record itself (8 fields)
 
 note_record_id (ASCII string, required):
@@ -234,12 +273,26 @@ URL to an image to include with this note.
 5. XML format specification
 
 The XML Namespace for PFIF is:
+PFIF的XML命名空间是：
 http://zesty.ca/pfif/1.4
 The MIME type for a PFIF document is:
+一个PFIF文档的MIME类型是:
 application/pfif+xml
-A valid PFIF XML document consists of a single pfif element containing one or more person or note elements, each of which contains child elements for the fields described above. In a person element, the person_record_id, source_date, and full_name fields are mandatory. In a note element, the note_record_id, author_name, and source_date fields are mandatory. All other fields are optional. The order of the child elements within a person or note element is not significant.
+A valid PFIF XML document consists of a single pfif element containing one or more person or note elements, 
+一个有效的PFIF XML文档由一个一个单独的PFIF元素组成，其中包含a)一个或多个person元素, 或b)一个或多个note元素。
+each of which contains child elements for the fields described above. 
+这些元素又包含了作为子元素的上述fields.
+In a person element, the person_record_id, source_date, and full_name fields are mandatory. 
+在person元素中，person_record_id, source_data和full_name是必需的。
+In a note element, the note_record_id, author_name, and source_date fields are mandatory. 
+在一个note元素忠，note_record_id, author_name和source_date是必需的。
+All other fields are optional. The order of the child elements within a person or note element is not significant.
+其它所有fields都是可选的。子元素在一个person元素或note元素中的顺序不重要。
+
 A note element can exist inside or outside a person element. When a note element appears outside a person element, the note must contain a person_record_id. Otherwise, the person_record_id field is optional, and if present, must match the person_record_id of the enclosing person.
+一个note元素可以存在于一个person元素的里面或外面。当一个note元素出现在person元素的外面时，这个note必须包含一个person_record_id. 当note元素在person元素里面时，person_record_id是可选的。如果在这种情况下person_record_id存在的话，必需跟外部的note元素的person_record_id一致。
 The RELAX NG Schema for PFIF, given in RELAX NG Compact Syntax, is as follows:
+以下给出一个用RELAX NG Compact Syntax表示的PFIF的RELAX NG架构： 
 namespace pfif = "http://zesty.ca/pfif/1.4"
 
 start = element pfif:pfif { person* & note* }
