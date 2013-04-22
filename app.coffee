@@ -12,6 +12,7 @@ validate = (data) ->
   data
   
 querystring = require("querystring")
+routesapi = require('./routes/api')
 express = require("express")
 routes = require("./routes")
 firebase = require("firebase")
@@ -39,42 +40,9 @@ app.use express.errorHandler()  if "development" is app.get("env")
 app.get "/", routes.index
 app.get "/users", user.list
 
-app.get "/api/feeds/note", (req, res) ->
-  ###/feeds/note request###
-  console.log "feeds/note api"
-  urlData = url.parse(req.url)
-  params = querystring.parse(urlData.query)
-  
-  validParams = feedsapi.validateNoteParam params 
-  ###param validation###
-  if validParams
-    note = new firebase("https://wiredancer.firebaseio.com/note")
-    note.once "value", (snapshot) -> 
-      result = feedsapi.query snapshot.val(), 'note', validParams
-      res.write result
-      res.end()
-  else
-    res.write "Could not understand your request"
-    res.end()
+app.get "/api/feeds/note", routesapi.feedOfNote 
 
-app.get "/api/feeds/user", (req, res) ->
-  ###/feeds/user request###
-  console.log "feeds/user api"
-  urlData = url.parse(req.url)
-  params = querystring.parse(urlData.query)
-  
-  validParams = feedsapi.validateUserParam params
-  ###param validation###
-  if validParams
-    note = new firebase("https://wiredancer.firebaseio.com/user")
-    note.once "value", (snapshot) -> 
-      result = feedsapi.query snapshot.val(), 'user', validParams
-      res.write result
-      res.end()
-  else
-    res.write "Could not understand your request"
-    res.end()  
-
+app.get "/api/feeds/user", routesapi.feedOfUser 
 
 server.listen app.get("port"), ->
   console.log "Express server listening on port " + app.get("port")
