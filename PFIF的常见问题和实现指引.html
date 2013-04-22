@@ -35,9 +35,9 @@
 </a><a href="http://zesty.ca/pfif/faq.html#multiple-records">我的应用程序应如何处理对于同一个人的多条记录？</a>
 <li><a href="http://zesty.ca/pfif/faq.html#schema-location">
 </a><a href="http://zesty.ca/pfif/faq.html#schema-location"><code>xmlns:xsi</code>
-</a><a href="http://zesty.ca/pfif/faq.html#schema-location">和<code>xsi:schemaLocation</code>是干什么的？</a>
+</a><a href="http://zesty.ca/pfif/faq.html#schema-location">和<code>xsi:schemaLocation</code>属性是拿来干什么的？</a>
 <li><a href="http://zesty.ca/pfif/faq.html#spec-validation">
-</a><a href="http://zesty.ca/pfif/faq.html#spec-validation">为什么规格文档无法通过W3C验证？</a>
+</a><a href="http://zesty.ca/pfif/faq.html#spec-validation">为什么规范文档无法通过W3C验证？</a>
 </li></li></li></li></li></li></li></li></li></li></li></ul>
 </div>
 
@@ -164,7 +164,7 @@
 <p>
 总是优先考虑 PFIF XML 文档格式.
 无论怎样你的应用都会需要支持这个格式。
-  如果你在写一个将PFIF XML直接格式化的程序，要记住，在字段中你需要将 &quot;&amp;&quot; 替换成 &quot;&amp;amp;&quot;
+  如果你在写一个将PFIF XML直接格式化的程序，要记住，在字段中你需要将 &quot;&amp;&quot; 替换成 &quot;&amp;amp;&quot; ；将
  &quot;&lt;&quot; 替换成 &quot;&amp;lt;&quot;。.
 
 <p>
@@ -193,7 +193,7 @@ PFIF-aware 应用应该扫描这个文档以找到 <code class="element">pfif:pe
 <p>
   如果该字段是关于失踪人员的不会发生改变的信息，那么将它放在  <span class="type">person</span> 记录的<span class="field">other</span> 字段中。
 
-  说明中（specification）提到:
+  规范中（specification）提到:
   
 <blockquote>
   短字段应该跟字段名称，冒号和字段值在同一行。
@@ -224,60 +224,36 @@ automated-pfif-author: ScrapeMatic 0.5</pre>
 <p>
   哪怕当一个应用确定了多个 <span class="type">person</span> 记录指向的其实是同一个人，
   它也不应该尝试去就地合并这些记录。
-Instead, the application should retain all the received records
-  Instead, 它应该保留所有收到的记录，同时呈现一个他们的合并版本。保留原始记录会保持记录的可信度，使得应用可以在未来处理来自于原始来源的相同记录。
+ 实际上, 它应该保留所有收到的记录，同时呈现一个他们的合并版本。保留原始记录会保持记录的可信度，使得应用可以在未来处理来自于原始来源的相同记录。
 
 <p>
-<a href="http://zesty.ca/pfif/1.1#database">The Database Schema section of the specification</a>
-suggests a possible way 
-that an application based on a relational database
-can keep track of multiple records
-referring to the same person.
+<a href="http://zesty.ca/pfif/1.1#database">这份规范的数据库模型部分</a>
+提出了一种可能的方式，使得基于关系型数据库应用可以跟踪指向同一个person的多个记录。
 
 <h3 id="schema-location">
-What are the <code>xmlns:xsi</code> and
-<code>xsi:schemaLocation</code> attributes for?</h3>
+<code>xmlns:xsi</code> 
+<code>xsi:schemaLocation</code> 属性是拿来干什么的?</h3>
 
 <p>
-These attributes are not required by the PFIF specification,
-but can help validation tools validate XML documents.
-For example,
-Altova&#39;s <a href="http://www.altova.com/products_ide.html">XML Spy</a>,
-an XML editor and validator, recognizes these attributes
+  这些属性不是PFIF规范所必需的，但是它们有助于校验工具来校验XML文档。
+  例如
+Altova 的 <a href="http://www.altova.com/products_ide.html">XML Spy</a>,
+一个XML的编辑器和校验器, 能识别这些属性，从而利用它们来参照PFIF XML模型来校验一个PFIF文档
 and can use them to validate a PFIF document against the PFIF XML Schema.
 
 <p>
-The <a href="http://zesty.ca/pfif/1.1/pfif-1.1-example.xml">example PFIF document</a>
-shows how to use these attributes
-to tell readers of a PFIF document
-where to find the XML Schema for the document.
-The <code>xmlns:xsi</code> attribute identifies the namespace
-for an XML Schema Instance,
-and the <code>xsi:schemaLocation</code>
-maps the PFIF namespace URI to the URL for the XML Schema document.
-
+  这个<a href="http://zesty.ca/pfif/1.1/pfif-1.1-example.xml">PFIF文档范例</a>
+  展示了如何使用这些属性来告诉PFIF文档的阅读器在哪里能找文档的XML模型。
+  其中 <code>xmlns:xsi</code> 属性标识了一个XML模型实例的命名空间。而 <code>xsi:schemaLocation</code> 则将PFIF命名空间URI映射到ML模型文档的URL地址。
 <h3 id="spec-validation">
-为什么规格文档无法通过W3C验证？</h3>
+为什么规范文档无法通过W3C验证？</h3>
 
 <p>
-The specification document at
-<a href="http://zesty.ca/pfif/1.1">http://zesty.ca/pfif/1.1</a>
-includes attributes from RDDL 2.0,
-a proposed format for referring to an XML Schema.
-These attributes are present so that a program that reads a PFIF document
-can follow the namespace URL
-to <a href="http://zesty.ca/pfif/1.1">http://zesty.ca/pfif/1.1</a>,
-retrieve the document,
-and find the link to the XML Schema document
-at <a href="http://zesty.ca/pfif/1.1">http://zesty.ca/pfif/1.1/pfif-1.1.xsd</a>.
-If an XML processor supports RDDL,
-only the namespace has to be given,
-and no other attributes are needed to help locate the schema.
+在<a href="http://zesty.ca/pfif/1.1">http://zesty.ca/pfif/1.1</a>上的规范文档包括了来自于RDDL 2.0的属性(RDDL 2.0是一个被提出用来指向一个XML模型的格式）。These attributes are present so that a program that reads a PFIF document can follow the namespace URL to http://zesty.ca/pfif/1.1, 
+获取文档，以及在 <a href="http://zesty.ca/pfif/1.1">http://zesty.ca/pfif/1.1/pfif-1.1.xsd</a> 找到XML 模型文档的链接。如果一个XML处理器支持RDDL,
+那么只需要指定命名空间，而不需要其它属性来帮助找到模型。
 
 <p>
-The RDDL attributes are properly qualified in an &quot;rddl&quot; namespace.
-The <a href="http://validator.w3.org/">W3C validator</a>
-does not know how to handle namespaces,
-but otherwise the specification document is valid XHTML 1.0 Strict.
+RDDL 属性 are properly qualified in an &quot;rddl&quot; namespace. <a href="http://validator.w3.org/">W3C 校验器</a> 不知道怎么样处理命名空间，但从其它方面来说，这个规范文档是一个合法的XHTML 1.0 Strict文档.
 
 </p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></p></body></html>
