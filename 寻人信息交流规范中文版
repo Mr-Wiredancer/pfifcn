@@ -57,12 +57,30 @@ This document also offers an example of a possible relational database schema fo
 2. Design principles
 
 The purpose of PFIF is to bring people and data together. The design aims to promote convergence: convergence of people who seek the same person, convergence of information about a person obtained from various sources, convergence of duplicated data, and ultimately convergence of missing people with their loved ones.
+
+PFIF的目的是将人与数据结合在一起，其设计致力于提高其覆盖度：覆盖那些寻找同一个人的人，覆盖那些从不同途径得到的有关一个人的信息，覆盖那些重复的数据，最终——将那些走失的人带回他们的亲人身边。
+
 Data should be traceable. Since data comes from sources of unknown reliability and accountability, information on the origins of data should be maintained, to help users ascertain its trustworthiness.
+
+数据必须是有来源的，既然信息的来源是不可靠也不可信的，信息来源的描述则必须被维护，以帮助用户们判定这些信息的可靠性。
+
 Each record belongs to an original repository, which is the (PFIF or non-PFIF) repository where the record was first entered. The record may be copied to other places, but the original repository remains the authority on the record. Only the original repository should ever change the contents of a record.
+
+任何一条记录都归属于其原始仓库——该记录首次进入系统的地方（PFIF仓库或者一个普通来源），这条信息可以被复制到任何其他地方，但是它的原始仓库总是保持权威的。只有原始仓库才能够改变该条记录的内容。
+
 Each aggregator of data has its own perspective on the world and is responsible for choosing which data sources to trust. It is not possible to dictate truths about all data from a single central authority.
+
+每个`aggregator`数据聚合器都有自己的规则，并负责决定那些数据源是可信的，有一个单点集中式的权威来裁决信任是不可能的。
+
 Because multiple records might refer to the same person, PFIF allows such records to be associated with each other. But, by the preceding principle, each aggregator makes its own decisions about which records to associate; there is no central authority.
+
+因为多条记录可能会引用同一个人，PFIF允许这样的记录互相之间进行关联，但是，根据刚说的原则，每个聚合器自己来决定关联哪些数据，没有一个特别的机构来做这事儿。
+
 It should be possible to resolve multiple copies of the same record that have been imported via different data paths.
 All dates and times must be in UTC, never in a local time zone, because data records will be transmitted among many different time zones. This format uses dates in the RFC 3339 format, with only UTC allowed. Front-ends can convert dates and times to the local time zone for display.
+
+有时候，从不同的数据路径中多次导入同一条数据的时，需要进行合并。所有日期和时间必须以UTC表示，而非本地时间，因为数据可能在不同时区间交换。本格式使用RFC 3339定义的格式来表示时间，并且只允许使用UTC，前端应用程序可以将数据转换为本地时间以方便显示。
+
 3. Data life cycle
 
 Each PFIF repository may contain original records and clone records. An original record is a record residing in its original repository; a clone record is a copy of a record that originated in another repository. The following diagram describes the life of a PFIF record as it is created and then travels to other repositories.
