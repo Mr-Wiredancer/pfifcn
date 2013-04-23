@@ -24,7 +24,7 @@
 <li><a href="#principles">设计原则</a></li>
 <li><a href="#life-cycle">数据生命周期</a>
 <ol>
-<li><a href="#incremental-export">（Incremental export mechanism)</a></li>
+<li><a href="#incremental-export"> 递进式导出机制（Incremental export mechanism)</a></li>
 <li><a href="#data-update">数据更新机制</a></li>
 <li><a href="#data-expiry">数据失效机制</a></li>
 </ol>
@@ -131,7 +131,7 @@
        &#39;------------------------&#39;
 </pre>
 
-<h3 id="incremental-export">3.1. 叠加式输出机制</h3>
+<h3 id="incremental-export">3.1. 递进式导出机制</h3>
   
   
   
@@ -139,7 +139,7 @@
   
   
 <p>当一个PFIF仓库加入一个新的原始记录或克隆记录时，它必须将<span class="field">entry_date</span> 字段设为当时的时间。
-当更多的记录被添加时，这个时间值绝对不能减少。一个客户端可以以查询所有<span class="field">entry_date</span>字段大于上一次接收的记录中最大的<span class="field">entry_date</span>字段的记录的方式，来叠加式地更新它对于一个仓库的副本。
+当更多的记录被添加时，这个时间值绝对不能减少。一个客户端可以以查询所有<span class="field">entry_date</span>字段大于上一次接收的记录中最大的<span class="field">entry_date</span>字段的记录的方式，来递进地更新它对于一个仓库的副本。
 </p><h3 id="data-update">3.2. 数据更新机制</h3>
 
 <p>一个记录的原始仓库 (上图中的2a or 2b) 在一个记录被创建后可以更新该记录的任意字段, 除了<span class="field">person_record_id</span> 字段.
@@ -231,8 +231,8 @@ This placeholder 应该保留和原纪录相同的
 <dt><span class="field">expiry_date</span>
 ("yyyy-mm-ddThh:mm:ssZ"格式的ASCII字符串, 可选的):</dt>
 <dd>
-    UTC格式的日期，表示该记录副本被存储的时间。（见上面的叠加式输出机制）
-    (见上文 <a href="#incremental-export">叠加式输出机制</a>).
+    UTC格式的日期，表示该记录副本被存储的时间。（见上面的递进式导出机制）
+    (见上文 <a href="#incremental-export">递进式导出机制</a>).
 </dd>
 <dt><span class="field">author_name</span> (Unicode 字符串, 可选的):</dt>
 <dd>
@@ -245,7 +245,7 @@ This placeholder 应该保留和原纪录相同的
 </dd>
 <dt><span class="field">author_phone</span> (ASCII 字符串, 可选的):</dt>
 <dd>
-  录入该记录的坐着的电话号码
+  录入该记录的坐者的电话号码
   </dd>
 <dt><span class="field">source_name</span> (Unicode 字符串, 可选的):</dt>
 <dd>
@@ -271,101 +271,81 @@ This placeholder 应该保留和原纪录相同的
 </p><dl>
 <dt><span class="field">full_name</span> (Unicode 字符串, 必需的):</dt>
 <dd>
-  一个找到或失踪人员的全名，以该人员所用语言和所在文化所常用的顺序排列。比如，一个常见的英语名字会被格式化为名，中间名，姓，其中用空格隔开，同时一个常见的中文名字会被格式化为姓，名，其中没有任何空格。如果该人员有超过一个全名，（比如一个中文名一个英文名），以最常用的全名开始，并用换行符(Unicode U+000A)来隔开这些全名。
+  找到或失踪人员的全名，以该人员所用语言和所在文化所常用的顺序排列。比如，一个常见的英语名字会被格式化为名，中间名，姓，其中用空格隔开，同时一个常见的中文名字会被格式化为姓，名，其中没有任何空格。如果该人员有超过一个全名，（比如一个中文名一个英文名），以最常用的全名开始，并用换行符(Unicode U+000A)来隔开这些全名。
    
 </dd>
-<dt><span class="field">given_name</span> (Unicode string, optional):</dt>
+<dt><span class="field">given_name</span> (Unicode 字符串, 可选的):</dt>
 <dd>
-    Given name of the person sought or found,
-    optionally followed by a space and any middle names or middle initials.
+  找到或失踪人员的名。后面紧跟可选的一个空格符和任意中间名或中间名前缀。
 </dd>
-<dt><span class="field">family_name</span> (Unicode string, optional):</dt>
+<dt><span class="field">family_name</span> (Unicode 字符串, 可选的):</dt>
 <dd>
-    Family name of the person sought or found.
+  找到或失踪人员的姓。
 </dd>
-<dt><span class="field">alternate_names</span> (Unicode string, optional):</dt>
+<dt><span class="field">alternate_names</span> (Unicode 字符串, 可选的):</dt>
 <dd>
-    Any other names associated with the person
-    that are not part of the person's usual full name,
-    such as nicknames, alternate spellings, and transliterations.
-    For example, hiragana readings of Japanese kanji could go in this field.
-    Use newline (Unicode U+000A) characters to separate names.
+  任何其它既不是该人员全名的一部分，又跟该人员关联的姓名，譬如昵称，其它拼法和音译。举个例子，日语汉字的片假名可以放进这个字段。用换行符 (Unicode U+000A) 来分隔不同的名字。
 </dd>
-<dt><span class="field">description</span> (Unicode string, optional):</dt>
+<dt><span class="field">description</span> (Unicode 字符串, 可选的):</dt>
 <dd>
-    Description of the person in free-form text.
-    In entry forms, a multi-line text box is appropriate for this field.
+  自由格式文本的对于该人员的描述。在输入表格中，一个多行的文本框适用于该字段。
 </dd>
-<dt><span class="field">sex</span> (ASCII string, optional):</dt>
+<dt><span class="field">sex</span> (ASCII 字符串, 可选的):</dt>
 <dd>
-    Physical sex of the person sought or found,
-    specified as one of the three strings
-    <code>female</code>, <code>male</code>, or <code>other</code>.
-    If the sex is unknown, omit this field.
+  找到或失踪人员的性别。用以下三个字符串中的一个来表示：
+    <code>female</code>, <code>male</code>, or <code>other</code>。
+  如果性别是未知的，忽略这个字段。
 </dd>
 <dt><span class="field">date_of_birth</span>
-(ASCII string in the form "yyyy", "yyyy-mm", or "yyyy-mm-dd", optional):</dt>
+( "年年年年", "年年年年-月月", 或 "年年年年-月月-日日" 格式的ASCII字符串, 可选的):</dt>
 <dd>
-    Exact or approximate date of birth
-    of the person sought or found.
+  找到或失踪人员的准确或模糊出生日期。
 </dd>
 <dt><span class="field">age</span>
-(integer, or ASCII string in the form "min-max", optional):
+(整型数, 或"最小-最大"格式的ASCII字符串, 可选的):
 </dt><dd>
-    Approximate age of the person sought or found,
-    in years since birth as of
-    the <span class="field">source_date</span> of this record.
-    The value of this field is either a single decimal integer
-    or an inclusive range given as two decimal integers separated by a hyphen.
-    This field has no defined meaning
-    when <span class="field">source_date</span> is missing.
-</dd>
-<dt><span class="field">home_street</span> (Unicode string, optional):</dt>
+  找到或失踪人员的模糊年龄，以从其出生日期到
+<span class="field">source_date</span> 的日期为准。
+  这个字段的值可以是一个十进制的整数，也可以是一个由"-"隔开的两个十进制整数组成的闭区间。若<span class="field">source_date</span> 不存在则此字段没有意义。</dd>
+<dt><span class="field">home_street</span> (Unicode 字符串, 可选的):</dt>
 <dd>
-    Street name of the home address of the person sought or found.
-    To protect user privacy,
-    applications should generally avoid including a street number in this field.
+  找到或失踪人员的家庭地址的街道名称。为了保护用户隐私，应用通常避免在此字段中包含街道号码。
 </dd>
-<dt><span class="field">home_neighborhood</span> (Unicode string, optional):</dt>
+<dt><span class="field">home_neighborhood</span> (Unicode 字符串, optional):</dt>
 <dd>
-    Name of the home neighborhood of the person sought or found.
-    Use this field for the names of official or unofficial geographic regions
-    not captured by the other address fields.
+  找到或失踪人员的家庭住址所在社区。
+  对于其它地址字段不能反映的官方或非官方的地理区域名字，请使用此字段。例如XX小区。
 </dd>
-<dt><span class="field">home_city</span> (Unicode string, optional):</dt>
+<dt><span class="field">home_city</span> (Unicode 字符串, 可选的):</dt>
 <dd>
-    Home city of the person sought or found.
+  找到或失踪人员家庭住址所在城市。
 </dd>
-<dt><span class="field">home_state</span> (Unicode string, optional):</dt>
+<dt><span class="field">home_state</span> (Unicode 字符串, 可选的):</dt>
 <dd>
-    Home state, province, territory, district,
-    region, parish, county, or department
-    of the person sought or found,
-    specified as an uppercase ISO 3166-2 code (preferred) or by its name.
+  找到或失踪人员家庭地址所在地区或省份,
+   用一个大写的 ISO 3166-2 码 (首选) 或名字来表示。
 </dd>
-<dt><span class="field">home_postal_code</span> (ASCII string, optional):</dt>
+<dt><span class="field">home_postal_code</span> (ASCII 字符串, 可选的):</dt>
 <dd>
-    Postal code of the home address of the person sought or found,
-    in the format most commonly used in the country.
+  找到或失踪人员的家庭住址的邮政编码，以该国家通常使用的格式为准。
 </dd>
 <dt><span class="field">home_country</span>
-(ASCII ISO-3166-1 country code, optional):</dt>
+(ASCII ISO-3166-1 国家编码, 可选的):</dt>
 <dd>
-    Home country of the person sought or found,
-    specified as an uppercase two-letter ISO-3166-1 country code.
+  找到或失踪人员的家庭住址所在国家，用一个大写的两位ISO-3166-1国家编码来表示。
 </dd>
-<dt><span class="field">photo_url</span> (URL string, optional):</dt>
+<dt><span class="field">photo_url</span> (URL 字符串, 可选的):</dt>
 <dd>
+  用来识别找到或失踪人员的相片的URL地址。
     URL to an image of an identifying photograph of the person sought or found.
 </dd>
-<dt><span class="field">profile_urls</span> (URL string, optional):</dt>
+<dt><span class="field">profile_urls</span> (URL 字符串, 可选的):</dt>
 <dd>
-    URLs to the person's profile pages on other websites.
-    Use newline (Unicode U+000A) characters to separate URLs.
+  该人员在其它网站上的个人资料页面的URL地址。用换行符 (Unicode U+000A) 来分隔不同的地址。
 </dd>
 </dl>
 
-<h3 id="note-records">4.2. <span class="type">note</span> records</h3>
+<h3 id="note-records">4.2. <span class="type">note</span> 记录</h3>
 
 <p>每一个 <span class="type">note</span> 记录只属于一个 <span class="type">person</span> 记录。
 
@@ -564,7 +544,7 @@ the person in question is dead.</dd>
 
 </p><pre>namespace pfif = "http://zesty.ca/pfif/1.4"
 
-start = element pfif:pfif { person* &amp; note* }
+start = element pfif:pfif { person* &amp; note* } //译者标注：花括号里表明的是可以有任意数目的person和note以任意顺序排列。
 
 person = element pfif:person {
     <b>element pfif:person_record_id { record_id }</b> &amp;
@@ -629,7 +609,7 @@ status = "information_sought" | "is_note_author" |
 
 <h2 id="atom">6. Atom feed 规范</h2>
 
-<p>PFIF XML documents can be embedded into
+<p>PFIF XML文档可以被嵌入到
 <a href="http://www.atomenabled.org/developers/syndication/atom-format-spec.php">Atom 1.0</a> feeds.
 一个PFIF文档应该以XML命名空间嵌入和以 <span class="element">entry</span>的直系子元素被插入。
   

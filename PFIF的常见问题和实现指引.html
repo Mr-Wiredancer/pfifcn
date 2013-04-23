@@ -139,7 +139,7 @@
 而不是 <span class="field">entry_date</span> 字段对应。
 用户应该从不需要输入 <span class="field">entry_date</span> 字段。)
 
-<p><span class="field">entry_date</span>字段存在的目的是为了使叠加式更新(incremental updates)变得可能
+<p><span class="field">entry_date</span>字段存在的目的是为了使递进式更新(incremental updates)变得可能
 如果你想每天都镜像一个远程PFIF仓库的所有记录到自己的数据库，那么你不需要每天都请求dump整个
   远程数据库。你只需要请求所有 <span class="field">entry_date</span>
 大于你上一次接收的最高 <span class="field">entry_date</span> 的记录.
