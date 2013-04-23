@@ -1,4 +1,5 @@
 Google Group: https://groups.google.com/d/forum/pfifcn
+
 现阶段工作:
 
 1 PFIF(寻人信息交流规范) (对于文档翻译的修改和意见请反映在translation分支上)
