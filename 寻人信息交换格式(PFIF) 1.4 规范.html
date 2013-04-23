@@ -226,13 +226,17 @@ This placeholder 应该保留和原纪录相同的
 <dt><span class="field">entry_date</span>
 ("年年年年-月月-日日T时时:分分:秒秒Z" 格式的ASCII字符串, 可选的):</dt>
 <dd>
-  录入时间("年年年年-月月-日日T时时-分分-秒秒Z"格式的ASCII字符串，可选)：
+
+    UTC格式的日期，表示该记录副本被存储的时间。（见上面的递进式导出机制）
+    (见上文 <a href="#incremental-export">递进式导出机制</a>).
 </dd>
 <dt><span class="field">expiry_date</span>
 ("年年年年-月月-日日T时时:分分:秒秒Z"格式的ASCII字符串, 可选的):</dt>
 <dd>
-    UTC格式的日期，表示该记录副本被存储的时间。（见上面的递进式导出机制）
-    (见上文 <a href="#incremental-export">递进式导出机制</a>).
+
+    UTC格式的日期，此日期过后该记录应该被删除
+    (见上文 <a href="#data-expiry">数据失效机制</a>)。
+        </dd>
 </dd>
 <dt><span class="field">author_name</span> (Unicode 字符串, 可选的):</dt>
 <dd>
