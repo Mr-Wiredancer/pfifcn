@@ -224,12 +224,12 @@ This placeholder 应该保留和原纪录相同的
 
 </dd>
 <dt><span class="field">entry_date</span>
-("yyyy-mm-ddThh:mm:ssZ" 格式的ASCII字符串, 可选的):</dt>
+("年年年年-月月-日日T时时:分分:秒秒Z" 格式的ASCII字符串, 可选的):</dt>
 <dd>
   录入时间("年年年年-月月-日日T时时-分分-秒秒Z"格式的ASCII字符串，可选)：
 </dd>
 <dt><span class="field">expiry_date</span>
-("yyyy-mm-ddThh:mm:ssZ"格式的ASCII字符串, 可选的):</dt>
+("年年年年-月月-日日T时时:分分:秒秒Z"格式的ASCII字符串, 可选的):</dt>
 <dd>
     UTC格式的日期，表示该记录副本被存储的时间。（见上面的递进式导出机制）
     (见上文 <a href="#incremental-export">递进式导出机制</a>).
@@ -251,7 +251,7 @@ This placeholder 应该保留和原纪录相同的
 <dd>
   可读的该数据原始仓库的名字。</dd>
 <dt><span class="field">source_date</span>
-("yyyy-mm-ddThh:mm:ssZ" 格式的ASCII 字符串, 必需):</dt>
+("年年年年-月月-日日T时时:分分:秒秒Z" 格式的ASCII 字符串, 必需):</dt>
 <dd>
   该记录原始副本在其原始仓库被创建的时间，UTC格式。
 </dd>
@@ -395,7 +395,7 @@ This placeholder 应该保留和原纪录相同的
     explain how these records were determined to refer to the same person.
 </dd>
 <dt><span class="field">entry_date</span>
-(ASCII string in the form "yyyy-mm-ddThh:mm:ssZ", optional):</dt>
+(ASCII string in the form "年年年年-月月-日日T时时:分分:秒秒Z", optional):</dt>
 <dd>
     Date in UTC that this copy of this record was stored.
     A PFIF repository must guarantee that this value increases monotonically
@@ -419,7 +419,7 @@ This placeholder 应该保留和原纪录相同的
     The preferred contact phone number of the person who entered this note.
 </dd>
 <dt><span class="field">source_date</span>
-(ASCII string in the form "yyyy-mm-ddThh:mm:ssZ", required):</dt>
+(ASCII string in the form "年年年年-月月-日日T时时:分分:秒秒Z", required):</dt>
 <dd>
     The date in UTC that the original copy of this note was created
     in its home repository.
@@ -676,7 +676,7 @@ within the <span class="element">feed</span> element:
 <dd>
     This element should contain the date and time in UTC
     that this feed was last updated,
-    given in "yyyy-mm-ddThh:mm:ssZ" format.
+    given in "年年年年-月月-日日T时时:分分:秒秒Z" format.
 </dd>
 <dt><span class="element">link</span></dt>
 <dd>
@@ -777,7 +777,7 @@ within the <span class="element">feed</span> element:
 <dd>
     This element should contain the date and time in UTC
     that this feed was last updated,
-    given in "yyyy-mm-ddThh:mm:ssZ" format.
+    given in "年年年年-月月-日日T时时:分分:秒秒Z" format.
 </dd>
 <dt><span class="element">link</span></dt>
 <dd>
