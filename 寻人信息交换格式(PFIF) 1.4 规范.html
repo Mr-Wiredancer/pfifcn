@@ -1,0 +1,1240 @@
+<html><head><link rel="stylesheet" href="style.css">
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+<title>PFIF(寻人信息交换格式) 1.4 规范</title>
+</head>
+<body>
+
+<div class="title">
+<h1><a href=".">PFIF(寻人信息交换格式) 1.4 规范</a></h1>
+2012年5月29日<br>
+编辑: Ka-Ping Yee (ping<span style="display: none">spam</span>@zesty.ca)
+</div>
+
+  <p>这份规范的URL地址:
+<a href="http://zesty.ca/pfif/1.4">http://zesty.ca/pfif/1.4</a><br>
+    常见问题，例子和其它PFIF的信息:
+<a href="http://zesty.ca/pfif">http://zesty.ca/pfif</a>
+
+</p><p>这份文档在 <a href="http://www.gnu.org/copyleft/fdl.html">GNU Free Documentation License 1.2</a>下.
+
+</p><div class="toc">
+<ol>
+<li><a href="#abstract">摘要</a></li>
+<li><a href="#principles">设计原则</a></li>
+<li><a href="#life-cycle">数据生命周期</a>
+<ol>
+<li><a href="#incremental-export">（Incremental export mechanism)</a></li>
+<li><a href="#data-update">数据更新机制</a></li>
+<li><a href="#data-expiry">数据失效机制</a></li>
+</ol>
+</li><li><a href="#model">数据模型</a>
+<ol>
+<li><a href="#person-records">PERSON记录</a></li>
+<li><a href="#note-records">NOTE记录</a></li>
+</ol></li>
+<li><a href="#xml">XML格式规范</a></li>
+<li><a href="#atom">Atom feed规范</a>
+<ol>
+<li><a href="#atom-person">Atom person feeds</a></li>
+<li><a href="#atom-note">Atom note feeds</a></li>
+</ol></li>
+<li><a href="#rss">RSS feed规范</a>
+<ol>
+<li><a href="#rss-person">RSS person feeds</a></li>
+<li><a href="#rss-note">RSS note feeds</a></li>
+</ol></li>
+<li><a href="#database">建议的关系型数据库架构</a></li>
+<li><a href="#changes">相对于前一版规范的改动</a></li>
+<li><a href="#acknowledgements">致谢</a></li>
+</ol>
+</div>
+
+<h2 id="abstract">1. 摘要</h2>
+
+<p>此文档定义了寻人信息交换格式， 包括了关于由天灾人祸导致的失踪人员的一个数据模型和一个基于XML的交流格式。
+首先，我们会用一种不依赖于具体实现（如面向对象，关系型或XML）的方式解释这个格式, 然后会用一个RELAX NG架构解释PFIF的XML格式。
+此文档也对PFIF数据提供了一个可能的关系型数据库模型作为例子。
+</p><h2 id="principles">2. 设计原则</h2>
+
+<ol>
+<li>
+  PFIF旨在将人和数据整合在一起。这个设计的目标是提倡聚合(convergence)：搜索同一个人的人们的聚合，不同来源的关于同一个人信息的聚合，重复数据的聚合，以及失踪人员与他们亲人的聚合(团圆)。
+</li>
+
+<li>
+  数据应该是可追溯的。因为数据来自于未知可靠性的来源，所以数据来源的信息应该被保留，以帮助使用者确认其可信性。
+</li>
+
+<li>每一条记录都属于一个<dfn>源仓库</dfn>,
+其中源仓库指的是该信息（PFIF或非PFIF）被首次创建的仓库。</li>
+
+<li>
+  每一个数据收集者有它的世界观，有责任去选择可信任的数据来源以单一集中的权威来决定数据的真实性是不可能的。
+</li>
+
+<li>
+  因为多条记录有可能指向同一个人，PFIF允许这样的记录互相关联。但是，根据前一条原则，每一个数据收集者都有他的决定将哪些记录关联起来的权利；这里没有任何集中的权威</li>
+
+<li>从不同数据路径输入的同一个记录的不同副本应该可以被解析(resolved)
+</li>
+
+<li>
+  所有的日期和时间必须是UTC格式，断不能使用当地时区。因为数据记录会被传输到不同的时区。本格式使用改这个
+<a href="http://www.ietf.org/rfc/rfc3339.txt">RFC 3339 格式</a>, 并只允许UTC。不同的前台界面可以将日期和时间转换到当地时间来显示。
+</li>
+</ol>
+
+<h2 id="life-cycle">3. 数据生命周期</h2>
+
+<p>
+  每一个PFIF仓库可以包含 <dfn>原始记录</dfn> 和 <dfn>克隆记录</dfn>.
+
+  一个原始记录是存在于其原始仓库中的记录;
+  一个克隆记录是一个来自于其它仓库的记录。下图描述了一个PFIF记录从被创建到到被传输到其它仓库的生命周期。
+
+</p><pre class="diagram">                     .---------------------.
+                     | 1. 现实世界的事实   |
+                     &#39;---------------------&#39;
+                          |            |
+                  由人输入 |            | 由人输入
+          一个 PFIF 仓库中 |            | 一个非 PFIF 仓库中
+                          |            |
+ entry_date, source_date, |            |
+  source_name, source_url |            |
+                由仓库设定 |            |
+                          v            v
+.-----------------------------.    .------------------------------.
+| 2a.    原始的 PFIF 记录       |    | 2b. 原始的非 PFIF 记录         |
+| 在它的源仓库中                 |    | 在它的的源仓库中                |
+&#39;-----------------------------&#39;    &#39;------------------------------&#39;
+                          |            |
+       导出为一个PFIF       |            | 通过人工或者程序
+         文档或者feed       |            | 解析并转换为 PFIF数据模型
+                          |            |
+                          |            | source_date, source_name, source_url
+                          |            | 由人工或程序设定
+                          v            v
+                        .----------------.
+       .--------------&gt; | 3. PFIF 记录    |
+       |                &#39;----------------&#39;
+       |                        |
+       |                        | 被载入一个 PFIF 仓库
+       |                        |
+       |                        | entry_date被设为导入的 日期/时间
+       |                        v
+       |     .--------------------------------------.
+       |     | 4. 在 PFIF 仓库中的克隆记录              |
+       |     &#39;--------------------------------------&#39;
+       |                        |
+       |                        | 导出为 PFIF 文档或 feed
+       &#39;------------------------&#39;
+</pre>
+
+<h3 id="incremental-export">3.1. 叠加式输出机制</h3>
+  
+  
+  
+  
+  
+  
+<p>当一个PFIF仓库加入一个新的原始记录或克隆记录时，它必须将<span class="field">entry_date</span> 字段设为当时的时间。
+当更多的记录被添加时，这个时间值绝对不能减少。一个客户端可以以查询所有<span class="field">entry_date</span>字段大于上一次接收的记录中最大的<span class="field">entry_date</span>字段的记录的方式，来叠加式地更新它对于一个仓库的副本。
+</p><h3 id="data-update">3.2. 数据更新机制</h3>
+
+<p>一个记录的原始仓库 (上图中的2a or 2b) 在一个记录被创建后可以更新该记录的任意字段, 除了<span class="field">person_record_id</span> 字段.
+
+  每当一个PFIF仓库创建或者更新一个原始目录，它必须将<span class="field">source_date</span> 和
+<span class="field">entry_date</span> 字段设成当时的时间。
+  当一个仓库导入一个跟现存记录有同样记录标示符的PFIF记录时，它应该保留那个有最新的<span class="field">source_date</span>字段的版本.
+
+</p><h3 id="data-expiry">3.3. 数据失效机制</h3>
+
+<p>
+  当 <span class="field">expiry_date</span> 字段存在时，它表示该记录应该被删除以保护它所包含的个人信息的隐私。
+  遵守PFIF的实现必须符合以下要求：
+
+</p><ul>
+<li>
+在 <span class="field">expiry_date</span>后的一天内,对于任意外部客户端，包括用户和机器API客户端，
+PFIF仓库不能再提供对<span class="type">person</span> 记录的内容和所有关联的 <span class="type">note</span> 记录的访问。</li>
+
+<li>
+  在此之后，如果仓库要通过API导出它的数据，它应该在失效的<span class="type">person</span> 记录的位置继续导出一个placeholder记录。
+This placeholder 应该保留和原纪录相同的 
+<span class="field">person_record_id</span> 和
+<span class="field">expiry_date</span> 值,
+并且将<span class="field">source_date</span>
+和 <span class="field">entry_date</span>设为placeholder被创建时的时间。所有其它字段应为空或被忽略。
+</li>
+
+<li>
+  在
+ <span class="field">expiry_date</span>后的60天内,
+一个PFIF仓库必须永久和不可恢复地将包含<span class="type">person</span> 记录
+和所有关联<span class="type">note</span> 记录内容的副本（包括备份）删除,
+除了
+  <span class="field">person_record_id</span>,
+<span class="field">source_date</span>,
+<span class="field">entry_date</span>,
+和 <span class="field">expiry_date</span>
+字段需要用来生成placeholder
+</li>
+</ul>
+
+<p>
+  为了满足一个请求删除现存原始记录的请求，一个PFIF仓库应该将记录的
+<span class="field">expiry_date</span> 字段设成当时的时间
+(为了跟 <a href="#data-update">前一部分</a>保持一致,
+仓库也会把<span class="field">source_date</span>
+和<span class="field">entry_date</span> 设成当时的时间。)
+  这之后，上述的失效机制会将删除操作传播到其它遵守PFIF的仓库。
+</p><h2 id="model">4. 数据模型</h2>
+
+<p>有以下两种类型的记录
+<span class="type">person</span>记录
+是为了储存标识某个特定人员的信息，
+<span class="type">note</span> 记录是为了储存特定人员现在状态的信息
+每一个 <span class="type">note</span> 记录属于一个特定的
+<span class="type">person</span>, 而一个
+ <span class="type">person</span> 记录可以拥有任意数目的关联 <span class="type">note</span> 记录。
+
+</p><p><span class="type">person</span> 记录可以被找寻失踪人员的人创建，也可以被拥有失踪人员信息的人创建。特定人员的 <span class="type">person</span> 记录是所有parties聚合的重点;
+而特定人员 <span class="type">note</span> 记录则储存着有关特定人员不断增加的分享信息。</p><p>一个 <span class="type">person</span> 记录只有在其信息不正确的情况下才应该被更新。如果一个特定的
+<span class="type">person</span> 的状态或位置被改变,
+这应该由加入一个新的关于该<span class="type">person</span>的<span class="type">note</span> 记录来反映。
+</p><h3 id="person-records">4.1. <span class="type">person</span> 记录</h3>
+
+<p>一个 <span class="type">person</span> 记录包含了25个字段。
+对于一个特定人员，可能有多个
+<span class="type">person</span> 记录。实际上，任意从不同来源导入数据的应用，都很有可能获得同一人员的多份
+<span class="type">person</span> 记录。
+  应用对如何关联这些记录有决定权。
+(详见下文 <a href="#database"> 建议的关系型数据库架构</a> )。
+  推荐的做法是保留所有记录的副本，分开地跟踪哪些记录对应同一个人。
+
+</p><h4>关于记录本身的元数据 (9 个字段)</h4>
+
+<p>为了让用户可以追踪数据和确保其可行性， 这些元数据必不可少。
+</p><dl>
+<dt><span class="field">person_record_id</span>
+(ASCII 字符串，必需)</dt>
+<dd>
+  该记录的唯一识别符, 包含了一个小写的ASCII域名，后面紧跟一个"/"和一个本地的识别符。该域名标识了此记录的原始（地址），而这个原始地址拥有对这个记录的权威性。 本地识别符的格式取决于原始地址。当person_record_id以一个不同于应用本身域名的域名开时，这标识该记录是一个克隆记录。
+
+</dd>
+<dt><span class="field">entry_date</span>
+("yyyy-mm-ddThh:mm:ssZ" 格式的ASCII字符串, 可选的):</dt>
+<dd>
+  录入时间("年年年年-月月-日日T时时-分分-秒秒Z"格式的ASCII字符串，可选)：
+</dd>
+<dt><span class="field">expiry_date</span>
+("yyyy-mm-ddThh:mm:ssZ"格式的ASCII字符串, 可选的):</dt>
+<dd>
+    UTC格式的日期，表示该记录副本被存储的时间。（见上面的叠加式输出机制）
+    (见上文 <a href="#incremental-export">叠加式输出机制</a>).
+</dd>
+<dt><span class="field">author_name</span> (Unicode 字符串, 可选的):</dt>
+<dd>
+    录入该记录的作者的全名
+</dd>
+<dt><span class="field">author_email</span>
+(电子邮件地址字符串, 可选的):</dt>
+<dd>
+  录入该记录的作者的联系电子邮箱地址。
+</dd>
+<dt><span class="field">author_phone</span> (ASCII 字符串, 可选的):</dt>
+<dd>
+  录入该记录的坐着的电话号码
+  </dd>
+<dt><span class="field">source_name</span> (Unicode 字符串, 可选的):</dt>
+<dd>
+  可读的该数据原始仓库的名字。</dd>
+<dt><span class="field">source_dat</span>
+("yyyy-mm-ddThh:mm:ssZ" 格式的ASCII 字符串, 必需):</dt>
+<dd>
+  改记录原始副本在其原始仓库被创建的时间，UTC格式。
+</dd>
+<dt><span class="field">source_url</span> (URL 字符串, 可选的):</dt>
+<dd>
+  该记录在其原始仓库中的URL地址
+    (尽可能的详细，有可能的话具体到特定记录的URL地址）。
+</dd>
+</dl>
+
+<h4>表示关于失踪人员的信息(16 个字段)</h4>
+
+<p>
+  这些字段包含了用于标识一个人的信息；这些信息，除非是错误的，否则不要改变。
+搜索 <span class="type">person</span> 记录时应该搜索这些字段.
+
+</p><dl>
+<dt><span class="field">full_name</span> (Unicode 字符串, 必需的):</dt>
+<dd>
+  一个找到或失踪人员的全名，以该人员所用语言和所在文化所常用的顺序排列。比如，一个常见的英语名字会被格式化为名，中间名，姓，其中用空格隔开，同时一个常见的中文名字会被格式化为姓，名，其中没有任何空格。如果该人员有超过一个全名，（比如一个中文名一个英文名），以最常用的全名开始，并用换行符(Unicode U+000A)来隔开这些全名。
+   
+</dd>
+<dt><span class="field">given_name</span> (Unicode string, optional):</dt>
+<dd>
+    Given name of the person sought or found,
+    optionally followed by a space and any middle names or middle initials.
+</dd>
+<dt><span class="field">family_name</span> (Unicode string, optional):</dt>
+<dd>
+    Family name of the person sought or found.
+</dd>
+<dt><span class="field">alternate_names</span> (Unicode string, optional):</dt>
+<dd>
+    Any other names associated with the person
+    that are not part of the person's usual full name,
+    such as nicknames, alternate spellings, and transliterations.
+    For example, hiragana readings of Japanese kanji could go in this field.
+    Use newline (Unicode U+000A) characters to separate names.
+</dd>
+<dt><span class="field">description</span> (Unicode string, optional):</dt>
+<dd>
+    Description of the person in free-form text.
+    In entry forms, a multi-line text box is appropriate for this field.
+</dd>
+<dt><span class="field">sex</span> (ASCII string, optional):</dt>
+<dd>
+    Physical sex of the person sought or found,
+    specified as one of the three strings
+    <code>female</code>, <code>male</code>, or <code>other</code>.
+    If the sex is unknown, omit this field.
+</dd>
+<dt><span class="field">date_of_birth</span>
+(ASCII string in the form "yyyy", "yyyy-mm", or "yyyy-mm-dd", optional):</dt>
+<dd>
+    Exact or approximate date of birth
+    of the person sought or found.
+</dd>
+<dt><span class="field">age</span>
+(integer, or ASCII string in the form "min-max", optional):
+</dt><dd>
+    Approximate age of the person sought or found,
+    in years since birth as of
+    the <span class="field">source_date</span> of this record.
+    The value of this field is either a single decimal integer
+    or an inclusive range given as two decimal integers separated by a hyphen.
+    This field has no defined meaning
+    when <span class="field">source_date</span> is missing.
+</dd>
+<dt><span class="field">home_street</span> (Unicode string, optional):</dt>
+<dd>
+    Street name of the home address of the person sought or found.
+    To protect user privacy,
+    applications should generally avoid including a street number in this field.
+</dd>
+<dt><span class="field">home_neighborhood</span> (Unicode string, optional):</dt>
+<dd>
+    Name of the home neighborhood of the person sought or found.
+    Use this field for the names of official or unofficial geographic regions
+    not captured by the other address fields.
+</dd>
+<dt><span class="field">home_city</span> (Unicode string, optional):</dt>
+<dd>
+    Home city of the person sought or found.
+</dd>
+<dt><span class="field">home_state</span> (Unicode string, optional):</dt>
+<dd>
+    Home state, province, territory, district,
+    region, parish, county, or department
+    of the person sought or found,
+    specified as an uppercase ISO 3166-2 code (preferred) or by its name.
+</dd>
+<dt><span class="field">home_postal_code</span> (ASCII string, optional):</dt>
+<dd>
+    Postal code of the home address of the person sought or found,
+    in the format most commonly used in the country.
+</dd>
+<dt><span class="field">home_country</span>
+(ASCII ISO-3166-1 country code, optional):</dt>
+<dd>
+    Home country of the person sought or found,
+    specified as an uppercase two-letter ISO-3166-1 country code.
+</dd>
+<dt><span class="field">photo_url</span> (URL string, optional):</dt>
+<dd>
+    URL to an image of an identifying photograph of the person sought or found.
+</dd>
+<dt><span class="field">profile_urls</span> (URL string, optional):</dt>
+<dd>
+    URLs to the person's profile pages on other websites.
+    Use newline (Unicode U+000A) characters to separate URLs.
+</dd>
+</dl>
+
+<h3 id="note-records">4.2. <span class="type">note</span> records</h3>
+
+<p>每一个 <span class="type">note</span> 记录只属于一个 <span class="type">person</span> 记录。
+
+一个特定的<span class="type">person</span> 记录可以和多个<span class="type">note</span> 记录相关联。
+(见下文的实现提示。
+  一个可能的数据库实现是包含一个外键, <span class="field">person_record_id</span>,
+来指向一个 <span class="type">person</span> 记录。
+一个面向对象的实现可以是在<span class="type">person</span> 对象中加入一个
+<span class="type">note</span> 对象的列表。)
+
+</p><p><span class="type">note</span>记录被用来提供失踪人员的更新信息。
+  每一个NOTE记录有一个时间戳以及该记录的作者信息。不同的应用可以使用时间戳来决定一个给定字段的最新值。
+
+</p><h4>Metadata about the record itself (8 fields)</h4>
+
+<dl>
+<dt><span class="field">note_record_id</span> (ASCII string, required):</dt>
+<dd>
+    Unique identifier for this record,
+    which consists of a domain name followed by a slash and a local identifier.
+    The domain name identifies this record's home repository,
+    which is the authority for this record.
+    The format of the local identifier is up to the home repository.
+    When the <span class="field">note_record_id</span>
+    begins with a domain other than the application's own domain,
+    it means this record is a clone of a record from another source.
+</dd>
+<dt><span class="field">person_record_id</span> (ASCII string, required):</dt>
+<dd>
+    The <span class="field">person_record_id</span>
+    of the <span class="type">person</span> record
+    to which this note belongs.
+</dd>
+<dt><span class="field">linked_person_record_id</span> (ASCII string, optional):</dt>
+<dd>
+    The <span class="field">person_record_id</span>
+    of another <span class="type">person</span> record
+    to associate with the record to which this note belongs.
+    When this field is present,
+    it signifies that the author of this note
+    believes that the two records identified by
+    <span class="field">person_record_id</span> and
+    <span class="field">linked_person_record_id</span>
+    refer to the same person.
+    If this field is present,
+    the <span class="field">text</span> field should
+    explain how these records were determined to refer to the same person.
+</dd>
+<dt><span class="field">entry_date</span>
+(ASCII string in the form "yyyy-mm-ddThh:mm:ssZ", optional):</dt>
+<dd>
+    Date in UTC that this copy of this record was stored.
+    A PFIF repository must guarantee that this value increases monotonically
+    as records are added,
+    so that a client can update a copy of a repository
+    by querying for all records with an
+    <span class="field">entry_date</span> greater than or equal to the
+    <span class="field">entry_date</span> of the last received record.
+</dd>
+<dt><span class="field">author_name</span> (Unicode string, required):</dt>
+<dd>
+    The full name of the person who entered this note.
+</dd>
+<dt><span class="field">author_email</span>
+(e-mail address string, optional):</dt>
+<dd>
+    The preferred contact e-mail address of the person who entered this note.
+</dd>
+<dt><span class="field">author_phone</span> (ASCII string, optional):</dt>
+<dd>
+    The preferred contact phone number of the person who entered this note.
+</dd>
+<dt><span class="field">source_date</span>
+(ASCII string in the form "yyyy-mm-ddThh:mm:ssZ", required):</dt>
+<dd>
+    The date in UTC that the original copy of this note was created
+    in its home repository.
+    In most cases, notes should be sorted by this field for display.
+</dd>
+</dl>
+
+<h4>失踪人员的状态信息 (6 个字段)</h4>
+
+<p>The
+<span class="field">author_made_contact</span>,
+<span class="field">status</span>,
+<span class="field">email_of_found_person</span>,
+<span class="field">phone_of_found_person</span> 和
+<span class="field">last_known_location</span> 字段储存了随时间变化的数据。当这些字段在 <span class="type">note</span> 记录中存在时,
+该记录声明了这些字段的新的值，
+而 <span class="field">source_date</span> 字段则表明这些新值生效的日期。
+  
+  所以，举个例子，一个希望显示最新已知位置的应用可以寻找有有非空<span class="field">last_known_location</span>
+字段和最大<span class="field">source_date</span>指的
+<span class="type">note</span>记录。
+
+</p><dl>
+<dt><span class="field">author_made_contact</span> (ASCII string, optional):
+</dt><dd>
+    This value is the string <code>true</code>
+    if the author of this note has personally contacted the missing person,
+    or <code>false</code> otherwise.
+    If this field is <code>true</code>,
+    the <span class="field">text</span> field of this note should
+    describe HOW and WHEN the person was contacted or seen.
+</dd>
+<dt><span class="field">status</span> (ASCII string, optional)</dt>
+<dd>Status of the person sought or found, specified as one of the
+following five strings:
+<dl>
+<dt><code>information_sought</code></dt>
+<dd>The author of the note is seeking information
+on the person in question.</dd>
+<dt><code>is_note_author</code></dt>
+<dd>The author of the note is the person in question.</dd>
+<dt><code>believed_alive</code></dt>
+<dd>The author of the note has received information that
+the person in question is alive.</dd>
+<dt><code>believed_missing</code></dt>
+<dd>The author of the note has reason to believe that
+the person in question is still missing.</dd>
+<dt><code>believed_dead</code></dt>
+<dd>The author of the note has received information that
+the person in question is dead.</dd>
+</dl>
+</dd>
+<dt><span class="field">email_of_found_person</span>
+(e-mail address string, optional):</dt>
+<dd>
+    The current preferred contact e-mail address of the FOUND person.
+    This field is present ONLY if the person has been FOUND.
+    If this field is present,
+    the <span class="field">text</span> field of this note should
+    describe HOW the person's contact information was determined.
+</dd>
+<dt><span class="field">phone_of_found_person</span>
+(ASCII string, optional):</dt>
+<dd>
+    The current preferred contact phone number of the FOUND person.
+    This field is present ONLY if the person has been FOUND.
+    If this field is present,
+    the <span class="field">text</span> field of this note should
+    describe HOW the person's contact information was determined.
+</dd>
+<dt><span class="field">last_known_location</span>
+(Unicode string, optional):</dt>
+<dd>
+    A free-form description of the last known location of the person.
+    To specify geographic coordinates in this field,
+    give the latitude in decimal degrees (positive for north), then a comma,
+    then the longitude in decimal degrees (positive for east).
+    If this field is present,
+    the <span class="field">text</span> field of this note should
+    describe HOW the person's location was determined.
+</dd>
+<dt><span class="field">text</span> (Unicode string, required):</dt>
+<dd>
+    Free-form text description of the person's current condition,
+    situation and location details, where they were last seen,
+    corrections to other information, and so on.
+    In entry forms, a multi-line text box is appropriate for this field.
+</dd>
+<dt><span class="field">photo_url</span> (URL string, optional):</dt>
+<dd>
+    URL to an image to include with this note.
+</dd>
+</dl>
+
+<h2 id="xml">5. XML 格式规范</h2>
+
+<p>
+  PFIF的XML命名空间是：
+</p><ul><li>
+<a href="http://zesty.ca/pfif/1.4">http://zesty.ca/pfif/1.4</a></li></ul>
+
+<p>一个PFIF文档的MIME类型是:
+
+</p><ul><li><code>application/pfif+xml</code></li></ul>
+
+<p>一个有效的PFIF XML文档由一个一个单独的<span class="element">pfif</span> element元素组成，其中包含a)一个或多个<span class="element">person</span>元素, 或b)一个或多个<span class="element">note</span>元素。这些元素又包含了作为子元素的上述字段。
+在一个 <span class="element">person</span> 元素中,
+<span class="field">person_record_id</span>,
+<span class="field">source_date</span>, 和
+<span class="field">full_name</span> 字段是必需的。在一个
+ <span class="element">note</span> 元素中,
+<span class="field">note_record_id</span>,
+<span class="field">author_name</span>, 和
+<span class="field">source_date</span> 字段是必需的。
+  所有其它字段都是可选的。子元素在 <span class="element">person</span> 或
+<span class="element">note</span> 元素中的顺序不重要。
+</p><p>
+  
+  一个<span class="element">note</span>元素可以存在于一个<span class="element">person</span>元素的里面或外面。当一个<span class="element">note</span>元素出现在<span class="element">person</span>元素的外面时，这个<span class="element">note</span>必须包含一个<span class="field">person_record_id</span>. 当<span class="element">note</span>元素在<span class="element">person</span> 元素里面时，<span class="field">person_record_id</span>是可选的。如果在这种情况下<span class="field">person_record_id</span>存在的话，必需跟外部的<span class="element">person</span>元素的person_record_id一致。
+
+</p><p>以下给出一个用RELAX NG Compact Syntax表示的PFIF的<a href="http://relaxng.org/">RELAX NG</a>架构： 
+
+</p><pre>namespace pfif = "http://zesty.ca/pfif/1.4"
+
+start = element pfif:pfif { person* &amp; note* }
+
+person = element pfif:person {
+    <b>element pfif:person_record_id { record_id }</b> &amp;
+    element pfif:entry_date { time } ? &amp;
+    element pfif:expiry_date { time } ? &amp;
+    element pfif:author_name { text } ? &amp;
+    element pfif:author_email { email } ? &amp;
+    element pfif:author_phone { phone } ? &amp;
+    element pfif:source_name { text } ? &amp;
+    <b>element pfif:source_date { time }</b> &amp;
+    element pfif:source_url { url } ? &amp;
+    <b>element pfif:full_name { text }</b> &amp;
+    element pfif:given_name { text } ? &amp;
+    element pfif:family_name { text } ? &amp;
+    element pfif:alternate_names { text } ? &amp;
+    element pfif:description { text } ? &amp;
+    element pfif:sex { sex } ? &amp;
+    element pfif:date_of_birth { approx_date } ? &amp;
+    element pfif:age { approx_age } ? &amp;
+    element pfif:home_street { text } ? &amp;
+    element pfif:home_neighborhood { text } ? &amp;
+    element pfif:home_city { text } ? &amp;
+    element pfif:home_state { text } ? &amp;
+    element pfif:home_postal_code { text } ? &amp;
+    element pfif:home_country { country_code } ? &amp;
+    element pfif:photo_url { url } ? &amp;
+    element pfif:profile_urls { text } ? &amp;
+    note*
+}
+
+note = element pfif:note {
+    <b>element pfif:note_record_id { record_id }</b> &amp;
+    element pfif:person_record_id { record_id } ? &amp;
+    element pfif:linked_person_record_id { record_id } ? &amp;
+    element pfif:entry_date { time } ? &amp;
+    <b>element pfif:author_name { text }</b> &amp;
+    element pfif:author_email { email } ? &amp;
+    element pfif:author_phone { phone } ? &amp;
+    <b>element pfif:source_date { time }</b> &amp;
+    element pfif:author_made_contact { boolean } ? &amp;
+    element pfif:status { status } ? &amp;
+    element pfif:email_of_found_person { email } ? &amp;
+    element pfif:phone_of_found_person { phone } ? &amp;
+    element pfif:last_known_location { text } ? &amp;
+    element pfif:text { text } &amp;
+    element pfif:photo_url { url } ?
+}
+
+record_id = xsd:string { pattern = ".+/.+" }
+time = xsd:dateTime { pattern = "\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z" }
+email = xsd:string { pattern = ".+@.+" }
+phone = xsd:string { pattern = "[\-+()\d ]+" }
+url = text
+sex = "female" | "male" | "other"
+approx_date = xsd:string { pattern = "\d\d\d\d(-\d\d(-\d\d)?)?" }
+approx_age = xsd:string { pattern = "\d+(-\d+)?" }
+country_code = xsd:string { pattern = "[A-Z][A-Z]" }
+boolean = "true" | "false"
+status = "information_sought" | "is_note_author" |
+    "believed_alive" | "believed_missing" | "believed_dead"
+</pre>
+
+<h2 id="atom">6. Atom feed 规范</h2>
+
+<p>PFIF XML documents can be embedded into
+<a href="http://www.atomenabled.org/developers/syndication/atom-format-spec.php">Atom 1.0</a> feeds.
+一个PFIF文档应该以XML命名空间嵌入和以 <span class="element">entry</span>的直系子元素被插入。
+  
+</p>
+
+<p>Atom 1.0 定义了一个包含了任意数目<span class="element">entry</span> 元素的最高级 <span class="element">feed</span> 元素。
+  
+  这个最高级元素应该声明一个PFIF命名空间。
+  推荐的前缀是<code>pfif</code>，所以最高级元素应该像这样
+：
+</p>
+
+<pre>&lt;feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:pfif="http://zesty.ca/pfif/1.4"&gt;
+...
+&lt;/feed&gt;</pre>
+
+<p>
+这个部分的剩下内容提供了如何让应用populate标准Atom元素，使得feed会对于feed读取软件有意义的建议。但是，嵌入的PFIF文档对于任何在Atom元素中出现的冗余信息都具有优先级。
+</p>
+
+<p>
+ 这里定义了两种PFIF Atom Feeds
+
+<dfn>person feeds</dfn> in which each entry contains a person,
+and <dfn>note feeds</dfn> in which each entry contains a note.
+A person feed is roughly analogous
+to a blog feed containing blog entries;
+a note feed is roughly analogous
+to a comment feed on a particular blog entry.
+For example, one application might subscribe to a person feed
+in order to aggregate missing person records from other databases;
+another application might subscribe to a note feed
+in order to display a stream of notes with updates about a particular person.
+</p>
+
+<h3 id="atom-person">6.1. Atom person feeds</h3>
+
+<p>An Atom person feed provides at least the following elements
+within the <span class="element">feed</span> element:
+</p>
+
+<dl>
+<dt><span class="element">id</span></dt>
+<dd>
+    This element should contain a unique URI associated with this feed.
+    This might be the URL to the website
+    that corresponds to the database or service providing this feed.
+</dd>
+<dt><span class="element">title</span></dt>
+<dd>
+    This element should contain the name of this feed.
+    This should include the title of the database or service
+    providing this feed.
+</dd>
+<dt><span class="element">subtitle</span></dt>
+<dd>
+    This element should contain a phrase or sentence describing this feed.
+    This would be the place to explain how this feed is produced,
+    for example:
+    "Scraped daily by FooMatic 2.3 from http://example.org/".
+</dd>
+<dt><span class="element">updated</span></dt>
+<dd>
+    This element should contain the date and time in UTC
+    that this feed was last updated,
+    given in "yyyy-mm-ddThh:mm:ssZ" format.
+</dd>
+<dt><span class="element">link</span></dt>
+<dd>
+    This element should contain a URL from which this feed can be retrieved.
+    This element should have a <code>rel</code> attribute whose value
+    is <code>self</code>.
+</dd>
+</dl>
+
+<p>An Atom person feed provides at least the following elements
+within each <span class="element">entry</span> element:
+</p>
+
+<dl>
+<dt><span class="element">pfif:person</span></dt>
+<dd>
+    This element contains child elements for the fields of the
+    <a href="#person-records"><span class="type">person</span> record</a>,
+    as well as zero or more
+    <span class="element">pfif:note</span> elements.
+    A service wishing to provide a complete export
+    would include all the <span class="type">note</span> records
+    associated with the person here.
+</dd>
+<dt><span class="element">id</span></dt>
+<dd>
+    This element should contain a URI string consisting of the
+    scheme "pfif:" followed by the value of the
+    <span class="field">person_record_id</span> field.
+</dd>
+<dt><span class="element">title</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">full_name</span> field.
+</dd>
+<dt><span class="element">author</span></dt>
+<dd>
+    This element should contain a
+    <span class="element">name</span> element containing the value of the
+    <span class="field">author_name</span> field and an
+    <span class="element">email</span> element containing the value of the
+    <span class="field">author_email</span> field
+    in the <span class="type">person</span> record.
+</dd>
+<dt><span class="element">updated</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">source_date</span> field
+    in the <span class="type">person</span> record.
+</dd>
+<dt><span class="element">content</span></dt>
+<dd>
+    This element should contain a human-readable
+    HTML formatting of the information
+    in the <span class="type">person</span> record.
+    It is up to the application to decide how to format the content.
+</dd>
+<dt><span class="element">source</span></dt>
+<dd>
+    This element should contain a copy of the
+    <span class="element">title</span> element of this feed.
+    This element may also contain copies of any
+    other child elements of the feed element.
+</dd>
+</dl>
+
+<h3 id="atom-note">6.2. Atom note feeds</h3>
+
+<p>An Atom note feed provides at least the following elements
+within the <span class="element">feed</span> element:
+</p>
+
+<dl>
+<dt><span class="element">id</span></dt>
+<dd>
+    This element should contain a unique URI associated with this feed.
+    This might be the URL to the website
+    that corresponds to the database or service providing this feed.
+</dd>
+<dt><span class="element">title</span></dt>
+<dd>
+    This element should contain the name of this feed.
+    This should include the title of the database or service
+    providing this feed,
+    followed by a more specific title that describes how the notes
+    were selected from the database or service.
+    For example, for a note feed about a particular person,
+    the title could be the title of the service
+    followed by the first name and last name of the person in question.
+</dd>
+<dt><span class="element">subtitle</span></dt>
+<dd>
+    This element should contain a phrase or sentence describing this feed.
+    This would be the place to explain how this feed is produced,
+    for example: "Exported by CiviCRM 1.1, http://www.example.org/."
+</dd>
+<dt><span class="element">updated</span></dt>
+<dd>
+    This element should contain the date and time in UTC
+    that this feed was last updated,
+    given in "yyyy-mm-ddThh:mm:ssZ" format.
+</dd>
+<dt><span class="element">link</span></dt>
+<dd>
+    This element should contain a URL from which this feed can be retrieved.
+    This element should have a <code>rel</code> attribute whose value
+    is <code>self</code>.
+</dd>
+</dl>
+
+<p>An Atom note feed provides at least the following elements
+within each <span class="element">entry</span> element:
+</p>
+
+<dl>
+<dt><span class="element">pfif:note</span></dt>
+<dd>
+    This element contains child elements for the fields of the
+    <a href="#note-records"><span class="type">note</span> record</a>.
+</dd>
+<dt><span class="element">id</span></dt>
+<dd>
+    This element should contain a URI string consisting of the
+    scheme "pfif:" followed by the value of the
+    <span class="field">note_record_id</span> field.
+</dd>
+<dt><span class="element">title</span></dt>
+<dd>
+    This element should contain an excerpt
+    of the <span class="field">text</span> field.
+</dd>
+<dt><span class="element">author</span></dt>
+<dd>
+    This element should contain a <span class="element">name</span> element
+    containing the value of the <span class="field">author_name</span> field
+    and an <span class="element">email</span> element
+    containing the value of the <span class="field">author_email</span> field
+    in the <span class="type">note</span> record.
+</dd>
+<dt><span class="element">updated</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">source_date</span> field
+    in the <span class="type">note</span> record.
+</dd>
+<dt><span class="element">content</span></dt>
+<dd>
+    This element should contain an HTML formatting of the
+    <span class="field">text</span> field
+    in the <span class="type">note</span> record.
+    It is up to the application to decide how to format the content.
+</dd>
+</dl>
+
+<h2 id="rss">7. RSS feed specifications</h2>
+
+<p>PFIF XML documents can be embedded into
+<a href="http://blogs.law.harvard.edu/tech/rss">RSS 2.0</a> feeds.
+(In RSS 2.0 terminology, this section defines an RSS 2.0 module.)
+The PFIF document should be specified using an XML namespace
+and embedded as an immediate child
+of the <span class="element">item</span> element.
+</p>
+
+<p>RSS 2.0 defines two main elements,
+<span class="element">channel</span> and <span class="element">item</span>,
+that are enclosed in a top-level <span class="element">rss</span> element.
+The top-level element should declare the PFIF namespace.
+The recommended prefix is <code>pfif</code>,
+so the top-level element should look like this:
+</p>
+
+<pre>&lt;rss version="2.0" xmlns:pfif="http://zesty.ca/pfif/1.4"&gt;
+...
+&lt;/rss&gt;</pre>
+
+<p>
+The rest of this section offers recommendations
+on how applications should populate the standard RSS elements
+so that the feed will make sense to existing feed-reading software.
+Nonetheless, the embedded PFIF document takes precedence
+over any redundant information that appears in RSS elements.
+</p>
+
+<p>
+As in the preceding section,
+two kinds of PFIF RSS feeds are defined here:
+person feeds in which each item contains a person,
+and note feeds in which each item contains a note.
+</p>
+
+<h3 id="rss-person">7.1. RSS person feeds</h3>
+
+<p>An RSS person feed provides at least the following elements
+within the <span class="element">channel</span> element:
+</p>
+
+<dl>
+<dt><span class="element">title</span></dt>
+<dd>
+    This element should contain the name of this feed,
+    which should include the title of the database or service
+    providing this feed.
+</dd>
+<dt><span class="element">description</span></dt>
+<dd>
+    This element should contain a phrase or sentence describing this feed.
+    This is the place to explain how this feed is produced, for example:
+    "Scraped daily by FooMatic 2.3 from http://example.org/".
+</dd>
+<dt><span class="element">lastBuildDate</span></dt>
+<dd>
+    This element should contain the date and time in UTC
+    that this feed was last updated,
+    given in <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
+    date format, for example: "Sat, 07 Sep 2002 00:00:01 GMT".
+</dd>
+<dt><span class="element">link</span></dt>
+<dd>
+    This element should contain a URL to the website
+    that corresponds to the database or service providing this feed.
+</dd>
+</dl>
+
+<p>An RSS person feed provides at least the following elements
+within each <span class="element">item</span> element:
+</p>
+
+<dl>
+<dt><span class="element">pfif:person</span></dt>
+<dd>
+    This element contains child elements for the fields of the
+    <a href="#person-records"><span class="type">person</span> record</a>,
+    as well as zero or more
+    <span class="element">pfif:note</span> elements.
+    A service wishing to provide a complete export
+    would include all the <span class="type">note</span> records
+    associated with the person here.
+</dd>
+<dt><span class="element">guid</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">person_record_id</span> field.
+</dd>
+<dt><span class="element">title</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">full_name</span> field.
+</dd>
+<dt><span class="element">author</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">author_email</span> field,
+    followed by a space and the value of the
+    <span class="field">author_name</span> field enclosed in parentheses.
+</dd>
+<dt><span class="element">pubDate</span></dt>
+<dd>
+    This element should contain the date in the
+    <span class="field">source_date</span> field
+    in the <span class="type">person</span> record,
+    converted to <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
+    date format, for example: "Sat, 07 Sep 2002 00:00:01 GMT".
+    The timezone MUST be GMT and the year MUST have four digits.
+</dd>
+<dt><span class="element">description</span></dt>
+<dd>
+    This element should contain a human-readable
+    HTML formatting of the information
+    in the <span class="type">person</span> record.
+    It is up to the application to decide how to format the description.
+</dd>
+<dt><span class="element">source</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">source_name</span> field.
+</dd>
+<dt><span class="element">link</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">source_url</span> field.
+</dd>
+</dl>
+
+<h3 id="rss-note">7.2. RSS note feeds</h3>
+
+<p>An RSS note feed provides at least the following elements
+within the <span class="element">channel</span> element:
+</p>
+
+<dl>
+<dt><span class="element">title</span></dt>
+<dd>
+    This element should contain the name of this feed.
+    This should include the title of the database or service
+    providing this feed,
+    followed by a more specific title that describes how the notes
+    were selected from the database or service.
+    For example, for a note feed about a particular person,
+    the title could be the title of the service
+    followed by the first name and last name of the person in question.
+</dd>
+<dt><span class="element">description</span></dt>
+<dd>
+    This element should contain a phrase or sentence describing the feed.
+    This is the place to explain how the feed is produced, for example:
+    "Scraped daily by FooMatic 2.3 from http://www.example.org/".
+</dd>
+<dt><span class="element">lastBuildDate</span></dt>
+<dd>
+    This element should contain the date and time in UTC
+    that this feed was last updated,
+    given in <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
+    date format, for example: "Sat, 07 Sep 2002 00:00:01 GMT".
+</dd>
+<dt><span class="element">link</span></dt>
+<dd>
+    This element should contain a URL to the website
+    that corresponds to the database or service providing this feed.
+    For a note feed about a particular person,
+    this link could point to the web page for that person's record.
+</dd>
+</dl>
+
+<p>An RSS note feed provides at least the following elements
+within each <span class="element">item</span> element:
+</p>
+
+<dl>
+<dt><span class="element">pfif:note</span></dt>
+<dd>
+    This element contains child elements for the fields of the
+    <a href="#note-records"><span class="type">note</span> record</a>.
+</dd>
+<dt><span class="element">guid</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">note_record_id</span> field.
+</dd>
+<dt><span class="element">author</span></dt>
+<dd>
+    This element should contain the value of the
+    <span class="field">author_email</span> field,
+    followed by a space and the value of
+    <span class="field">author_name</span> field enclosed in parentheses.
+</dd>
+<dt><span class="element">pubDate</span></dt>
+<dd>
+    This element should contain the date in the
+    <span class="field">source_date</span> field
+    in the <span class="type">note</span> record,
+    converted to <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
+    date format, for example: "Sat, 07 Sep 2002 00:00:01 GMT".
+    The timezone MUST be GMT and the year MUST have four digits.
+</dd>
+<dt><span class="element">description</span></dt>
+<dd>
+    This element should contain an HTML formatting of the
+    <span class="field">text</span> field
+    in the <span class="type">note</span> record.
+    It is up to the application to decide how to format the description.
+</dd>
+</dl>
+
+<h2 id="database">8. 建议的关系型数据库架构</h2>
+
+<p>
+  此部分推荐了一种可能的对于PFIF数据的关系型数据库架构。
+  数据库设计的具体细节取决于每个应用；这只是一个可能的开始点。一个关系型数据库可以在两个表中储存PFIF数据：
+一个储存<span class="type">person</span>，另一个储存
+<span class="type">note</span>。
+
+</p><pre>PERSON table:
+     string      person_record_id           primary key
+     datetime    entry_date
+     datetime    expiry_date
+     string      author_name
+     string      author_email
+     string      author_phone
+     string      source_name
+     datetime    source_date
+     string      source_url
+     string      full_name
+     string      given_name
+     string      family_name
+     string      alternate_names
+     text        description
+     string      sex
+     string      date_of_birth
+     string      age
+     string      home_street
+     string      home_neighborhood
+     string      home_city
+     string      home_state
+     string      home_postal_code
+     string      home_country
+     string      photo_url
+     string      profile_urls
+
+NOTE table:
+     string      note_record_id             primary key
+     string      person_record_id           foreign key not null
+     string      linked_person_record_id    foreign key or null
+     datetime    entry_date
+     string      author_name
+     string      author_email
+     string      author_phone
+     datetime    source_date
+     boolean     author_made_contact
+     string      status
+     string      email_of_found_person
+     string      phone_of_found_person
+     string      last_known_location
+     text        text
+     string      photo_url</pre>
+
+<p>
+  为了将一个外部 <span class="type">person</span> 记录连接到一个本地的 <span class="type">person</span> 记录,
+这个应用增加了一个 <span class="type">note</span>
+并关联到本地的 <span class="type">person</span> 记录, 这个<span class="type">note</span>记录包含了一个<span class="field">linked_person_record_id</span> 字段，内容为
+外部记录的 <span class="field">person_record_id</span>
+。
+  这个note的其它字段描述了合并决定的情况：
+
+<span class="field">source_date</span> 表示了这个决定的日期，
+<span class="field">text</span> 给出了决定的理由，
+and <span class="field">author_name</span>
+命名了人员，电脑或其它作出该决定的实体。
+  这个规范并不强制要求一个应用是否合并两个记录；一个合并操作应该由一个在寻找类似数据的记录的人类操作员或软件算法来发起。在一个 <span class="type">note</span> 记录里记下该合并会使放弃一个坏的合并决定变得可能，而在<span class="field">author_name</span> 字段记下操作人或程序的名字舍得错误合并的原因有源可寻。
+
+</p><p>
+  当战展示一个 <span class="type">person</span> 记录时,
+应用可以在属于那个person记录的notes里面寻找所有非空<span class="field">linked_person_record_id</span>
+字段， 或者一个被链接记录的合并视图。
+
+
+</p><h2 id="changes">9. 相对于前一版规范的改动</h2>
+
+<h3>9.1. 从PFIF 1.1到PFIF 1.2的改动</h3>
+
+<p><span class="type">person</span> records gained four new fields:
+<span class="field">sex</span>,
+<span class="field">date_of_birth</span>,
+<span class="field">age</span>, and
+<span class="field">home_country</span>.
+The <span class="field">home_zip</span> field
+was replaced with <span class="field">home_postal_code</span>.
+To upgrade from a PFIF 1.1 repository,
+export the old <span class="field">home_zip</span> values in the
+<span class="field">home_postal_code</span> field
+and set the <span class="field">home_country</span> field
+to <code>US</code> in records
+whose <span class="field">home_state</span> refers to a U. S. state
+or <span class="field">home_postal_code</span> field contains a U. S. zip code.
+
+</p><p><span class="type">note</span> records gained three new fields:
+<span class="field">person_record_id</span>,
+<span class="field">linked_person_record_id</span>, and
+<span class="field">status</span>.
+
+</p><p>In the PFIF XML format,
+<span class="element">note</span> elements became allowed
+outside of <span class="element">person</span> elements.
+Aside from the 
+<span class="field">note_record_id</span> and
+<span class="field">person_record_id</span> fields,
+which had to appear first,
+the rest of the child elements became permissible in any order.
+
+</p><p>Atom entries and RSS items came to contain
+individual <span class="element">pfif:person</span> and
+<span class="element">pfif:note</span> elements
+with no enclosing <span class="element">pfif:pfif</span> element.
+
+</p><h3>9.2. 从PFIF 1.2 到 PFIF 1.3的改动</h3>
+
+<p>The <span class="field">source_date</span> field became mandatory
+on <span class="type">person</span> records.
+Records can be updated by (and only by) their original repository,
+and the <span class="field">source_date</span> must be updated
+when a record changes.
+
+</p><p><span class="type">person</span> records
+gained the mandatory <span class="field">full_name</span> field;
+<span class="field">first_name</span> and
+<span class="field">last_name</span> became optional.
+
+</p><p><span class="type">person</span> records
+gained the new <span class="field">expiry_date</span> field,
+with conformance requirements for data deletion
+and propagation of the expiry date.
+
+</p><p>In the PFIF XML format,
+all the child elements of
+<span class="element">person</span> elements and
+<span class="element">note</span> elements
+became permissible in any order.
+
+</p><h3>9.3. 从 PFIF 1.3 到 PFIF 1.4的改动</h3>
+
+<p><span class="type">person</span> records
+gained the optional <span class="field">alternate_names</span> field
+and the optional <span class="field">profile_urls</span> field.
+
+</p><p>In <span class="type">person</span> records,
+the <span class="field">first_name</span> field
+was renamed to <span class="field">given_name</span>
+and the <span class="field">last_name</span> field
+was renamed to <span class="field">family_name</span>.
+
+</p><p>In <span class="type">person</span> records,
+the <span class="field">description</span> field
+replaced the old <span class="field">other</span> field.
+
+</p><p><span class="type">note</span> records
+gained the <span class="field">photo_url</span> field.
+
+</p><p>In <span class="type">note</span> records,
+the <span class="field">found</span> field was renamed to
+<span class="field">author_made_contact</span>.
+
+</p><p>In <span class="type">note</span> records,
+there is now a convention for specifying geographic coordinates
+in the existing <span class="field">last_known_location</span> field.
+
+
+</p><h2 id="acknowledgements">10. Acknowledgements</h2>
+
+<p>
+ 第一版PFIF基于的最初的数据模型归功于 CiviCRM team, David Geilhufe, and Kieran Lal.
+Luke Blanshard, Tony Chang, Josh Kleinpeter,
+Kieran Lal, Jonathan Plax, Gabe Wachob, Ka-Ping Yee,
+Steve Hakusa, Mark Prutsalis, Lee Schumacher,
+the Missing Persons Community of Interest
+(tci_missingpersons<span style="display: none">spam</span>@googlegroups.com),
+  以及其他在工作组列表上
+(pfif<span style="display: none">spam</span>@googlegroups.com)
+对现有PFIF设计有贡献的参与人员。
+
+
+
+</p></body></html>
