@@ -7,7 +7,7 @@
 <h1>PFIF常见问题和实现指南</h1>
 </div>
 
-<p>本文档英文原版由Ka-Ping Yee维护, 中文译文由利嘉豪翻译和维护。
+<p>本文档英文原版由Ka-Ping Yee维护, 中文译文由利 嘉豪主要翻译和维护，特别鸣谢胡 千里。
 可以通过邮箱ping<img src="http://zesty.ca/64.gif" />zesty.ca联系Ka-Ping, 通过lijiahao90 at gmail联系嘉豪。
 <p>许多问题都可以通过查看<a href="http://zesty.ca/pfif/1.1">PFIF说明书</a>
 和<a href="http://zesty.ca/pfif/1.1/pfif-1.1-example.xml">PFIF文档示例</a>找到答案。
@@ -113,7 +113,7 @@
 记录存储到一个仓库中之后，
 记录中没有任何内容会发生变化，连<span class="field">entry_date</span>字段也不例外。
 
-<p>PFIF 基于&quot;post-only&quot; 理念。
+<p>PFIF 基于&quot;post-only&quot; 原则。
 一条记录初次存储成PFIF格式之后，
 它只是从一个地方复制到另一个地方，内容不发生改变。
 
@@ -139,7 +139,7 @@
 而不是 <span class="field">entry_date</span> 字段对应。
 用户应该从不需要输入 <span class="field">entry_date</span> 字段。)
 
-<p><span class="field">entry_date</span>字段存在的目的是为了使叠加式更新(incremental updates)变得可能
+<p><span class="field">entry_date</span>字段存在的目的是为了使递进式更新(incremental updates)变得可能
 如果你想每天都镜像一个远程PFIF仓库的所有记录到自己的数据库，那么你不需要每天都请求dump整个
   远程数据库。你只需要请求所有 <span class="field">entry_date</span>
 大于你上一次接收的最高 <span class="field">entry_date</span> 的记录.
@@ -249,7 +249,7 @@ and can use them to validate a PFIF document against the PFIF XML Schema.
 为什么规范文档无法通过W3C验证？</h3>
 
 <p>
-在<a href="http://zesty.ca/pfif/1.1">http://zesty.ca/pfif/1.1</a>上的规范文档包括了来自于RDDL 2.0的属性(RDDL 2.0是一个被提出用来指向一个XML模型的格式）。These attributes are present so that a program that reads a PFIF document can follow the namespace URL to http://zesty.ca/pfif/1.1, 
+在<a href="http://zesty.ca/pfif/1.1">http://zesty.ca/pfif/1.1</a>上的规范文档包括了来自于RDDL 2.0的属性(RDDL 2.0是一个被提出用来指向一个XML模型的格式）。这些属性的存在是为了使读取PFIF文档的程序可以沿着命名空间URL地址找到http://zesty.ca/pfif/1.1, 
 获取文档，以及在 <a href="http://zesty.ca/pfif/1.1">http://zesty.ca/pfif/1.1/pfif-1.1.xsd</a> 找到XML 模型文档的链接。如果一个XML处理器支持RDDL,
 那么只需要指定命名空间，而不需要其它属性来帮助找到模型。
 
