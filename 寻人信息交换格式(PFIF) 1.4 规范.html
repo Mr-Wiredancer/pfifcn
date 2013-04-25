@@ -297,7 +297,7 @@ This placeholder 应该保留和原纪录相同的
 <dt><span class="field">sex</span> (ASCII 字符串, 可选的):</dt>
 <dd>
   找到或失踪人员的性别。用以下三个字符串中的一个来表示：
-    <code>female</code>, <code>male</code>, or <code>other</code>。
+    <code>female</code>, <code>male</code>, 或 <code>other</code>。
   如果性别是未知的，忽略这个字段。
 </dd>
 <dt><span class="field">date_of_birth</span>
@@ -341,7 +341,6 @@ This placeholder 应该保留和原纪录相同的
 <dt><span class="field">photo_url</span> (URL 字符串, 可选的):</dt>
 <dd>
   用来识别找到或失踪人员的相片的URL地址。
-    URL to an image of an identifying photograph of the person sought or found.
 </dd>
 <dt><span class="field">profile_urls</span> (URL 字符串, 可选的):</dt>
 <dd>
@@ -366,68 +365,46 @@ This placeholder 应该保留和原纪录相同的
 </p><h4>Metadata about the record itself (8 fields)</h4>
 
 <dl>
-<dt><span class="field">note_record_id</span> (ASCII string, required):</dt>
+<dt><span class="field">note_record_id</span> (ASCII 字符串, 必需的):</dt>
 <dd>
-    Unique identifier for this record,
-    which consists of a domain name followed by a slash and a local identifier.
-    The domain name identifies this record's home repository,
-    which is the authority for this record.
-    The format of the local identifier is up to the home repository.
-    When the <span class="field">note_record_id</span>
-    begins with a domain other than the application's own domain,
-    it means this record is a clone of a record from another source.
+  这个记录的唯一识别符，包含了一个域名紧跟一个"/"和一个本地识别符。
+  域名标识了这个记录的源仓库，而这个源仓库拥有对这个记录的权威性。
+  本地识别符的格式取决于源仓库。当 <span class="field">note_record_id</span>以一个不同于应用本身域名的域名开始时，这表示这个记录是一个从其它来源复制而来的克隆记录。
 </dd>
-<dt><span class="field">person_record_id</span> (ASCII string, required):</dt>
+<dt><span class="field">person_record_id</span> (ASCII 字符串, 必须的):</dt>
 <dd>
-    The <span class="field">person_record_id</span>
-    of the <span class="type">person</span> record
-    to which this note belongs.
+  改note记录所属的<span class="type">person</span>记录的
+    <span class="field">person_record_id</span>
+    
 </dd>
-<dt><span class="field">linked_person_record_id</span> (ASCII string, optional):</dt>
+<dt><span class="field">linked_person_record_id</span> (ASCII 字符串, 可选的):</dt>
 <dd>
-    The <span class="field">person_record_id</span>
-    of another <span class="type">person</span> record
-    to associate with the record to which this note belongs.
-    When this field is present,
-    it signifies that the author of this note
-    believes that the two records identified by
-    <span class="field">person_record_id</span> and
-    <span class="field">linked_person_record_id</span>
-    refer to the same person.
-    If this field is present,
-    the <span class="field">text</span> field should
-    explain how these records were determined to refer to the same person.
-</dd>
+    与该<span class="type">note</span>记录所属的<span class="type">person</span>记录有关的另一条 <span class="type">person</span> 记录的 <span class="field">person_record_id</span>。当此字段存在时，它表明该note记录的作者相信<span class="field">person_record_id</span> 和
+    <span class="field">linked_person_record_id</span>标识的两条person记录指向同一个人。
+    如果该字段存在，那么 <span class="field">text</span> 字段应该解释为什么这些记录被判断为指向同一个人。</dd>
 <dt><span class="field">entry_date</span>
-(ASCII string in the form "年年年年-月月-日日T时时:分分:秒秒Z", optional):</dt>
+("年年年年-月月-日日T时时:分分:秒秒Z"格式的ASCII字符串, 可选的):</dt>
 <dd>
-    Date in UTC that this copy of this record was stored.
-    A PFIF repository must guarantee that this value increases monotonically
-    as records are added,
-    so that a client can update a copy of a repository
-    by querying for all records with an
-    <span class="field">entry_date</span> greater than or equal to the
-    <span class="field">entry_date</span> of the last received record.
+  UTC格式的日期，表示了该记录该副本被储存的日期。
+一个PFIF仓库在添加记录时必须保证这个值单调递增，以使得一个客户，可以通过查询所有
+    <span class="field">entry_date</span> 大于或等于他上一次接收到的记录的
+    <span class="field">entry_date</span> 的方式，来更新一个仓库的副本。
 </dd>
-<dt><span class="field">author_name</span> (Unicode string, required):</dt>
+<dt><span class="field">author_name</span> (Unicode 字符串, 必须的):</dt>
 <dd>
-    The full name of the person who entered this note.
-</dd>
+  写入这个note的作者的全名。</dd>
 <dt><span class="field">author_email</span>
-(e-mail address string, optional):</dt>
+(电子邮箱地址字符串, 可选的):</dt>
 <dd>
-    The preferred contact e-mail address of the person who entered this note.
-</dd>
-<dt><span class="field">author_phone</span> (ASCII string, optional):</dt>
+  写入这个note的作者的优先联系电子邮箱地址。</dd>
+<dt><span class="field">author_phone</span> (ASCII 字符串, 可选的):</dt>
 <dd>
-    The preferred contact phone number of the person who entered this note.
+  写入这个note的作者的优先联系电话号码。
 </dd>
 <dt><span class="field">source_date</span>
-(ASCII string in the form "年年年年-月月-日日T时时:分分:秒秒Z", required):</dt>
+(form "年年年年-月月-日日T时时:分分:秒秒Z"格式的ASCII字符串, 必需的):</dt>
 <dd>
-    The date in UTC that the original copy of this note was created
-    in its home repository.
-    In most cases, notes should be sorted by this field for display.
+  该记录在源仓库被创建时的UTC日期时间。多数情况下，note记录应该以此字段排列来显示。
 </dd>
 </dl>
 
@@ -447,75 +424,54 @@ This placeholder 应该保留和原纪录相同的
 <span class="type">note</span>记录。
 
 </p><dl>
-<dt><span class="field">author_made_contact</span> (ASCII string, optional):
+<dt><span class="field">author_made_contact</span> (ASCII 字符串, 可选的):
 </dt><dd>
-    This value is the string <code>true</code>
-    if the author of this note has personally contacted the missing person,
-    or <code>false</code> otherwise.
-    If this field is <code>true</code>,
-    the <span class="field">text</span> field of this note should
-    describe HOW and WHEN the person was contacted or seen.
+  如果这个note的作者亲自联系过该失踪人员，那么这个字段值为字符串<code>true</code>，否则为 <code>false</code> 。
+  如果这个字段是<code>true</code>，
+    那么该记录的 <span class="field">text</span> 字段应该描述怎么样和什么时候，该失踪人员被联系到或者被看见。
 </dd>
-<dt><span class="field">status</span> (ASCII string, optional)</dt>
-<dd>Status of the person sought or found, specified as one of the
-following five strings:
+<dt><span class="field">status</span> (ASCII 字符串, 可选的)</dt>
+<dd>
+  找到或失踪人员的状态，用以下5个字符串忠的一个来代表：
 <dl>
 <dt><code>information_sought</code></dt>
-<dd>The author of the note is seeking information
-on the person in question.</dd>
+<dd>这个记录的作者正在寻找目标人员的信息。</dd>
 <dt><code>is_note_author</code></dt>
-<dd>The author of the note is the person in question.</dd>
+<dd>这个记录的作者正是目标人员。</dd>
 <dt><code>believed_alive</code></dt>
-<dd>The author of the note has received information that
-the person in question is alive.</dd>
+<dd>这个记录的作者已得到信息证明目标人员生还。</dd>
 <dt><code>believed_missing</code></dt>
-<dd>The author of the note has reason to believe that
-the person in question is still missing.</dd>
+<dd>这个记录的作者有理由相信目标人员仍然失踪。</dd>
 <dt><code>believed_dead</code></dt>
-<dd>The author of the note has received information that
-the person in question is dead.</dd>
+<dd>这个记录的作者已得到信息证明目标人员已经去世。</dd>
 </dl>
 </dd>
 <dt><span class="field">email_of_found_person</span>
-(e-mail address string, optional):</dt>
+(电子邮箱地址, 可选的):</dt>
 <dd>
+  找到人员现在的优先联系电子邮箱地址。
     The current preferred contact e-mail address of the FOUND person.
-    This field is present ONLY if the person has been FOUND.
-    If this field is present,
-    the <span class="field">text</span> field of this note should
-    describe HOW the person's contact information was determined.
+   仅当该人员被找到时此字段才存在。如果这个字段存在，那么这条记录的 <span class="field">text</span> 字段应该描述该人员的联系信息是怎样确定的。
 </dd>
 <dt><span class="field">phone_of_found_person</span>
-(ASCII string, optional):</dt>
+(ASCII 字符串, 可选的):</dt>
 <dd>
-    The current preferred contact phone number of the FOUND person.
-    This field is present ONLY if the person has been FOUND.
-    If this field is present,
-    the <span class="field">text</span> field of this note should
-    describe HOW the person's contact information was determined.
+  找到人员现在的优先联系电话号码。
+  仅当该人员被找到时此字段才存在。如果这个字段存在，那么这条记录的 <span class="field">text</span> 字段应该描述该人员的联系信息是怎样确定的。
 </dd>
 <dt><span class="field">last_known_location</span>
-(Unicode string, optional):</dt>
+(Unicode 字符串, 可选的):</dt>
 <dd>
-    A free-form description of the last known location of the person.
-    To specify geographic coordinates in this field,
-    give the latitude in decimal degrees (positive for north), then a comma,
-    then the longitude in decimal degrees (positive for east).
-    If this field is present,
-    the <span class="field">text</span> field of this note should
-    describe HOW the person's location was determined.
+  关于该人员最后已知位置的自由文本描述。可以用十进制的经纬度以逗号分割的形式来表示地理坐标。（纬度在前，经度在后。北纬和西经为正值。）如果这个字段存在，那么这条记录的
+    <span class="field">text</span>字段应该描述该人员的位置是怎样被确定的。
 </dd>
-<dt><span class="field">text</span> (Unicode string, required):</dt>
+<dt><span class="field">text</span> (Unicode 字符串, 必需的):</dt>
 <dd>
-    Free-form text description of the person's current condition,
-    situation and location details, where they were last seen,
-    corrections to other information, and so on.
-    In entry forms, a multi-line text box is appropriate for this field.
+  关于失踪人员的自由文本描述，其中包括该人员现在的状况和位置细节，最后一次在哪里被看到，对其它信息的更正，等等。在输入表格中，一个多行文本框适用于该字段。
 </dd>
-<dt><span class="field">photo_url</span> (URL string, optional):</dt>
+<dt><span class="field">photo_url</span> (URL 字符串, 可选的):</dt>
 <dd>
-    URL to an image to include with this note.
-</dd>
+  与该记录一起的一幅图片的URL地址。</dd>
 </dl>
 
 <h2 id="xml">5. XML 格式规范</h2>
