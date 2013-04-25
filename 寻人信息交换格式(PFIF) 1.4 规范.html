@@ -80,8 +80,8 @@
 </li>
 
 <li>
-  所有的日期和时间必须是UTC格式，断不能使用当地时区。因为数据记录会被传输到不同的时区。本格式使用改这个
-<a href="http://www.ietf.org/rfc/rfc3339.txt">RFC 3339 格式</a>, 并只允许UTC。不同的前台界面可以将日期和时间转换到当地时间来显示。
+  所有的日期和时间必须是国际标准时间，断不能使用当地时区。因为数据记录会被传输到不同的时区。本格式使用
+<a href="http://www.ietf.org/rfc/rfc3339.txt">RFC 3339 格式</a>格式的日期, 并只允许国际标准时间。不同的前台界面可以将日期和时间转换到当地时间来显示。
 </li>
 </ol>
 
@@ -227,14 +227,14 @@ This placeholder 应该保留和原纪录相同的
 ("年年年年-月月-日日T时时:分分:秒秒Z" 格式的ASCII字符串, 可选的):</dt>
 <dd>
 
-    UTC格式的日期，表示该记录副本被存储的时间。（见上面的递进式导出机制）
+  世界标准时间，表示该记录副本被存储的时间。（见上面的递进式导出机制）
     (见上文 <a href="#incremental-export">递进式导出机制</a>).
 </dd>
 <dt><span class="field">expiry_date</span>
 ("年年年年-月月-日日T时时:分分:秒秒Z"格式的ASCII字符串, 可选的):</dt>
 <dd>
 
-    UTC格式的日期，此日期过后该记录应该被删除
+    世界标准时间，此日期过后该记录应该被删除
     (见上文 <a href="#data-expiry">数据失效机制</a>)。
         </dd>
 <dt><span class="field">author_name</span> (Unicode 字符串, 可选的):</dt>
@@ -256,7 +256,7 @@ This placeholder 应该保留和原纪录相同的
 <dt><span class="field">source_date</span>
 ("年年年年-月月-日日T时时:分分:秒秒Z" 格式的ASCII 字符串, 必需):</dt>
 <dd>
-  该记录原始副本在其原始仓库被创建的时间，UTC格式。
+  该记录原始副本在其原始仓库被创建的时间，世界标准时间。
 </dd>
 <dt><span class="field">source_url</span> (URL 字符串, 可选的):</dt>
 <dd>
@@ -384,7 +384,7 @@ This placeholder 应该保留和原纪录相同的
 <dt><span class="field">entry_date</span>
 ("年年年年-月月-日日T时时:分分:秒秒Z"格式的ASCII字符串, 可选的):</dt>
 <dd>
-  UTC格式的日期，表示了该记录该副本被储存的日期。
+  世界标准时间，表示了该记录该副本被储存的日期。
 一个PFIF仓库在添加记录时必须保证这个值单调递增，以使得一个客户，可以通过查询所有
     <span class="field">entry_date</span> 大于或等于他上一次接收到的记录的
     <span class="field">entry_date</span> 的方式，来更新一个仓库的副本。
@@ -403,7 +403,7 @@ This placeholder 应该保留和原纪录相同的
 <dt><span class="field">source_date</span>
 (form "年年年年-月月-日日T时时:分分:秒秒Z"格式的ASCII字符串, 必需的):</dt>
 <dd>
-  该记录在源仓库被创建时的UTC日期时间。多数情况下，note记录应该以此字段排列来显示。
+  该记录在源仓库被创建时的世界标准时间。多数情况下，note记录应该以此字段排列来显示。
 </dd>
 </dl>
 
@@ -622,7 +622,7 @@ status = "information_sought" | "is_note_author" |
 </dd>
 <dt><span class="element">updated</span></dt>
 <dd>
-  这个元素应该包含这个feed上一次被更新的UTC日期时间，
+  这个元素应该包含这个feed上一次被更新的世界标准时间，
     用"年年年年-月月-日日T时时:分分:秒秒Z" 格式来表达。
 </dd>
 <dt><span class="element">link</span></dt>
@@ -696,7 +696,7 @@ status = "information_sought" | "is_note_author" |
 </dd>
 <dt><span class="element">updated</span></dt>
 <dd>
-    这个元素应该包含这个feed上一次被更新的UTC日期时间，
+    这个元素应该包含这个feed上一次被更新的世界标准时间，
     用"年年年年-月月-日日T时时:分分:秒秒Z" 格式来表达。
 </dd>
 <dt><span class="element">link</span></dt>
