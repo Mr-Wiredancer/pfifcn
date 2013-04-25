@@ -1047,39 +1047,29 @@ NOTE table:
 
 <h3>9.1. 从PFIF 1.1到PFIF 1.2的改动</h3>
 
-<p><span class="type">person</span> records gained four new fields:
+<p><span class="type">person</span> 记录增加了4个字段：
 <span class="field">sex</span>,
 <span class="field">date_of_birth</span>,
-<span class="field">age</span>, and
+<span class="field">age</span>, 和
 <span class="field">home_country</span>.
-The <span class="field">home_zip</span> field
-was replaced with <span class="field">home_postal_code</span>.
-To upgrade from a PFIF 1.1 repository,
-export the old <span class="field">home_zip</span> values in the
-<span class="field">home_postal_code</span> field
-and set the <span class="field">home_country</span> field
-to <code>US</code> in records
-whose <span class="field">home_state</span> refers to a U. S. state
-or <span class="field">home_postal_code</span> field contains a U. S. zip code.
+ <span class="field">home_zip</span> 字段被<span class="field">home_postal_code</span>字段替换。
+要将PFIF 1.1仓库升级的话，
+导出原有的 <span class="field">home_zip</span> 字段值到
+<span class="field">home_postal_code</span> 字段中；然后对那些<span class="field">home_state</span>指向美国或<span class="field">home_postal_code</span>包含一个美国邮编的记录，将<span class="field">home_country</span> 字段设成
+ <code>US</code> 。
 
-</p><p><span class="type">note</span> records gained three new fields:
+  </p><p><span class="type">note</span> 记录增加了3个字段:
 <span class="field">person_record_id</span>,
-<span class="field">linked_person_record_id</span>, and
+<span class="field">linked_person_record_id</span>, 和
 <span class="field">status</span>.
 
-</p><p>In the PFIF XML format,
-<span class="element">note</span> elements became allowed
-outside of <span class="element">person</span> elements.
-Aside from the 
-<span class="field">note_record_id</span> and
-<span class="field">person_record_id</span> fields,
-which had to appear first,
-the rest of the child elements became permissible in any order.
+</p><p>在PFIF XML格式中，
+<span class="element">note</span> 元素变成可以在 <span class="element">person</span> 元素以外存在的元素。除了<span class="field">note_record_id</span> 和必须出现在第一位的
+<span class="field">person_record_id</span> 字段,
+其它的子元素可以是任意顺序。
 
-</p><p>Atom entries and RSS items came to contain
-individual <span class="element">pfif:person</span> and
-<span class="element">pfif:note</span> elements
-with no enclosing <span class="element">pfif:pfif</span> element.
+</p><p>Atom entrys和RSS items转为包含独立的，没有被<span class="element">pfif:pfif</span>元素锁包含的<span class="element">pfif:person</span> 和
+<span class="element">pfif:note</span> 元素。
 
 </p><h3>9.2. 从PFIF 1.2 到 PFIF 1.3的改动</h3>
 
