@@ -236,7 +236,7 @@ This placeholder 应该保留和原纪录相同的
 
     UTC格式的日期，此日期过后该记录应该被删除
     (见上文 <a href="#data-expiry">数据失效机制</a>)。
-</dd>
+        </dd>
 <dt><span class="field">author_name</span> (Unicode 字符串, 可选的):</dt>
 <dd>
     录入该记录的作者的全名
@@ -593,112 +593,83 @@ status = "information_sought" | "is_note_author" |
 <p>
  这里定义了两种PFIF Atom Feeds
 
-<dfn>person feeds</dfn> in which each entry contains a person,
-and <dfn>note feeds</dfn> in which each entry contains a note.
-A person feed is roughly analogous
-to a blog feed containing blog entries;
-a note feed is roughly analogous
-to a comment feed on a particular blog entry.
-For example, one application might subscribe to a person feed
-in order to aggregate missing person records from other databases;
-another application might subscribe to a note feed
-in order to display a stream of notes with updates about a particular person.
+<dfn>person feeds</dfn>，其中每一个entry包含了一个person；
+<dfn>note feeds</dfn>， 其中每一个entry包含一个note。
+  一个person feed可以类比成一个拥有博客entries的博客feed；而一个note feed可以大致类比成特定博客entry的评论feed。例如，一个应用可能会subscribe到一个person feed， 为了将失踪人员的记录从其它数据库整合到一起；另一个应用则subscribe到一个note feed， 为了将特定人员的更新以记录的流形式显示出来。
 </p>
 
 <h3 id="atom-person">6.1. Atom person feeds</h3>
 
-<p>An Atom person feed provides at least the following elements
-within the <span class="element">feed</span> element:
+<p>一个Atom person feed在<span class="element">feed</span>元素内至少提供了以下元素：
 </p>
 
 <dl>
 <dt><span class="element">id</span></dt>
 <dd>
-    This element should contain a unique URI associated with this feed.
-    This might be the URL to the website
-    that corresponds to the database or service providing this feed.
+  这个元素应该包含一个与这个feed关联的唯一URI。
+  这可以使网站的URL地址，对应到提供这个feed的数据库或服务。
 </dd>
 <dt><span class="element">title</span></dt>
 <dd>
-    This element should contain the name of this feed.
-    This should include the title of the database or service
-    providing this feed.
+  这个元素应该包含这个feed的名字。
+  它应该包括提供这个feed的数据库或服务的名称。
 </dd>
 <dt><span class="element">subtitle</span></dt>
 <dd>
-    This element should contain a phrase or sentence describing this feed.
-    This would be the place to explain how this feed is produced,
-    for example:
-    "Scraped daily by FooMatic 2.3 from http://example.org/".
+  这个元素应该包含描述该feed的一个短语或一句话。
+  这里应该解释feed是怎么样被产生的，例如
+    "Scraped daily by FooMatic 2.3 from http://example.org/"。
 </dd>
 <dt><span class="element">updated</span></dt>
 <dd>
-    This element should contain the date and time in UTC
-    that this feed was last updated,
-    given in "年年年年-月月-日日T时时:分分:秒秒Z" format.
+  这个元素应该包含这个feed上一次被更新的UTC日期时间，
+    用"年年年年-月月-日日T时时:分分:秒秒Z" 格式来表达。
 </dd>
 <dt><span class="element">link</span></dt>
 <dd>
-    This element should contain a URL from which this feed can be retrieved.
-    This element should have a <code>rel</code> attribute whose value
-    is <code>self</code>.
+  这个元素应该包含一个可以得到这个feed的URL地址。这个元素应该有一个 <code>rel</code> 属性，而它的值是 <code>self</code>。
 </dd>
 </dl>
 
-<p>An Atom person feed provides at least the following elements
-within each <span class="element">entry</span> element:
+<p>一个Atom person feed在每一个<span class="element">entry</span> 元素里提供至少以下几个元素：
 </p>
 
 <dl>
 <dt><span class="element">pfif:person</span></dt>
 <dd>
-    This element contains child elements for the fields of the
-    <a href="#person-records"><span class="type">person</span> record</a>,
-    as well as zero or more
-    <span class="element">pfif:note</span> elements.
-    A service wishing to provide a complete export
-    would include all the <span class="type">note</span> records
-    associated with the person here.
+  这个元素包含了代表<a href="#person-records"><span class="type">person</span> record</a>的字段的子元素，和0或多个<span class="element">pfif:note</span> 元素。
+  一个希望提供完整导出的服务应该包含所有跟这个person有关的 <span class="type">note</span>记录。
 </dd>
 <dt><span class="element">id</span></dt>
 <dd>
-    This element should contain a URI string consisting of the
-    scheme "pfif:" followed by the value of the
-    <span class="field">person_record_id</span> field.
+  这个元素应该包含一个由"pfif:" 紧跟
+    <span class="field">person_record_id</span>的字段值所组成的URI字符串。
 </dd>
 <dt><span class="element">title</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">full_name</span> field.
+  这个元素应该包含
+    <span class="field">full_name</span> 的字段值。
 </dd>
 <dt><span class="element">author</span></dt>
-<dd>
-    This element should contain a
-    <span class="element">name</span> element containing the value of the
-    <span class="field">author_name</span> field and an
-    <span class="element">email</span> element containing the value of the
-    <span class="field">author_email</span> field
-    in the <span class="type">person</span> record.
+<dd>这个元素应该包含一个含有<span class="field">author_name</span> 的字段值的
+    <span class="element">name</span> 元素 和一个含有了<span class="field">author_email</span> 字段值的
+    <span class="element">email</span> 元素。这两个字段都属<span class="type">person</span>记录。
+
 </dd>
 <dt><span class="element">updated</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">source_date</span> field
-    in the <span class="type">person</span> record.
+  这个元素应该包含了<span class="type">person</span> 记录中的
+    <span class="field">source_date</span>字段值。
 </dd>
 <dt><span class="element">content</span></dt>
 <dd>
-    This element should contain a human-readable
-    HTML formatting of the information
-    in the <span class="type">person</span> record.
-    It is up to the application to decide how to format the content.
+  这个元素应该包含一个<span class="type">person</span>记录中的记录的可读HTML格式。
+  怎么样将内容格式化取决于应用。
 </dd>
 <dt><span class="element">source</span></dt>
 <dd>
-    This element should contain a copy of the
-    <span class="element">title</span> element of this feed.
-    This element may also contain copies of any
-    other child elements of the feed element.
+  这个元素应该包含一个这个feed的  <span class="element">title</span>元素的副本。
+  这个元素也可以包含feed元素的任意其它子元素的副本。
 </dd>
 </dl>
 
@@ -1062,12 +1033,12 @@ NOTE table:
 
 <span class="field">source_date</span> 表示了这个决定的日期，
 <span class="field">text</span> 给出了决定的理由，
-and <span class="field">author_name</span>
+而 <span class="field">author_name</span>
 命名了人员，电脑或其它作出该决定的实体。
   这个规范并不强制要求一个应用是否合并两个记录；一个合并操作应该由一个在寻找类似数据的记录的人类操作员或软件算法来发起。在一个 <span class="type">note</span> 记录里记下该合并会使放弃一个坏的合并决定变得可能，而在<span class="field">author_name</span> 字段记下操作人或程序的名字舍得错误合并的原因有源可寻。
 
 </p><p>
-  当战展示一个 <span class="type">person</span> 记录时,
+  当展示一个 <span class="type">person</span> 记录时,
 应用可以在属于那个person记录的notes里面寻找所有非空<span class="field">linked_person_record_id</span>
 字段， 或者一个被链接记录的合并视图。
 
