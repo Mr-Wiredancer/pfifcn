@@ -675,45 +675,33 @@ status = "information_sought" | "is_note_author" |
 
 <h3 id="atom-note">6.2. Atom note feeds</h3>
 
-<p>An Atom note feed provides at least the following elements
-within the <span class="element">feed</span> element:
+<p>一个 Atom note feed在<span class="element">feed</span>元素内至少提供了一下元素：
 </p>
 
 <dl>
 <dt><span class="element">id</span></dt>
 <dd>
-    This element should contain a unique URI associated with this feed.
-    This might be the URL to the website
-    that corresponds to the database or service providing this feed.
+    这个元素应该包含一个与这个feed关联的唯一URI。
+  这可以使网站的URL地址，对应到提供这个feed的数据库或服务。
 </dd>
 <dt><span class="element">title</span></dt>
 <dd>
-    This element should contain the name of this feed.
-    This should include the title of the database or service
-    providing this feed,
-    followed by a more specific title that describes how the notes
-    were selected from the database or service.
-    For example, for a note feed about a particular person,
-    the title could be the title of the service
-    followed by the first name and last name of the person in question.
+    这个元素应该包含这个feed的名字。
+  它应该包括提供这个feed的数据库或服务的名称,后面跟一个更加具体的标题，来解释数据库或服务如何选择note。例如，对于一个关于特定人员的note feed, title应该是服务的名字加上目标人员的姓名。
 </dd>
 <dt><span class="element">subtitle</span></dt>
 <dd>
-    This element should contain a phrase or sentence describing this feed.
-    This would be the place to explain how this feed is produced,
-    for example: "Exported by CiviCRM 1.1, http://www.example.org/."
+  这个元素应该包含描述该feed的一个短语或一句话。
+  这里应该解释feed是怎么样被产生的，例如: "Exported by CiviCRM 1.1, http://www.example.org/."
 </dd>
 <dt><span class="element">updated</span></dt>
 <dd>
-    This element should contain the date and time in UTC
-    that this feed was last updated,
-    given in "年年年年-月月-日日T时时:分分:秒秒Z" format.
+    这个元素应该包含这个feed上一次被更新的UTC日期时间，
+    用"年年年年-月月-日日T时时:分分:秒秒Z" 格式来表达。
 </dd>
 <dt><span class="element">link</span></dt>
 <dd>
-    This element should contain a URL from which this feed can be retrieved.
-    This element should have a <code>rel</code> attribute whose value
-    is <code>self</code>.
+    这个元素应该包含一个可以得到这个feed的URL地址。这个元素应该有一个 <code>rel</code> 属性，而它的值是 <code>self</code>。
 </dd>
 </dl>
 
@@ -1073,57 +1061,44 @@ NOTE table:
 
 </p><h3>9.2. 从PFIF 1.2 到 PFIF 1.3的改动</h3>
 
-<p>The <span class="field">source_date</span> field became mandatory
-on <span class="type">person</span> records.
-Records can be updated by (and only by) their original repository,
-and the <span class="field">source_date</span> must be updated
-when a record changes.
+<p> <span class="field">source_date</span> 字段在<span class="type">person</span> 记录中变成必需的。记录可以也只可以被它们的原始仓库更新，而且一个记录改变时 <span class="field">source_date</span>一定要被更新 。
+</p><p><span class="type">person</span> 记录增加了必需的 <span class="field">full_name</span> 字段；
+<span class="field">first_name</span> 和
+<span class="field">last_name</span> 变成可选的。
 
-</p><p><span class="type">person</span> records
-gained the mandatory <span class="field">full_name</span> field;
-<span class="field">first_name</span> and
-<span class="field">last_name</span> became optional.
+</p><p>
+  出于数据删除和失效日期传播的一致要求，
+  <span class="type">person</span> 记录增加了新的
+<span class="field">expiry_date</span> 字段。
 
-</p><p><span class="type">person</span> records
-gained the new <span class="field">expiry_date</span> field,
-with conformance requirements for data deletion
-and propagation of the expiry date.
-
-</p><p>In the PFIF XML format,
-all the child elements of
-<span class="element">person</span> elements and
-<span class="element">note</span> elements
-became permissible in any order.
-
+</p><p>在PFIF XML格式中，所有
+<span class="element">person</span> 元素 和
+<span class="element">note</span> 元素的子元素可为任意顺序
+。
 </p><h3>9.3. 从 PFIF 1.3 到 PFIF 1.4的改动</h3>
 
-<p><span class="type">person</span> records
-gained the optional <span class="field">alternate_names</span> field
-and the optional <span class="field">profile_urls</span> field.
+<p><span class="type">person</span> 记录增加可选择的<span class="field">alternate_names</span> 字段和可选择的<span class="field">profile_urls</span> 字段。.
 
-</p><p>In <span class="type">person</span> records,
-the <span class="field">first_name</span> field
-was renamed to <span class="field">given_name</span>
-and the <span class="field">last_name</span> field
-was renamed to <span class="field">family_name</span>.
+</p><p>在 <span class="type">person</span> 记录中,
+ <span class="field">first_name</span> 字段
+改名为 <span class="field">given_name</span>
+而<span class="field">last_name</span> 字改名为 <span class="field">family_name</span>。
 
-</p><p>In <span class="type">person</span> records,
-the <span class="field">description</span> field
-replaced the old <span class="field">other</span> field.
+</p><p>在 <span class="type">person</span> 记录中，
+ <span class="field">description</span> 字段
+替换了原有的<span class="field">other</span> 字段。
 
-</p><p><span class="type">note</span> records
-gained the <span class="field">photo_url</span> field.
+</p><p><span class="type">note</span> 记录
+增加了 <span class="field">photo_url</span> 字段。
 
-</p><p>In <span class="type">note</span> records,
-the <span class="field">found</span> field was renamed to
-<span class="field">author_made_contact</span>.
+</p><p>在 <span class="type">note</span> 记录中，
+ <span class="field">found</span> 字段被改名为
+<span class="field">author_made_contact</span>。
 
-</p><p>In <span class="type">note</span> records,
-there is now a convention for specifying geographic coordinates
-in the existing <span class="field">last_known_location</span> field.
+</p><p>在 <span class="type">note</span> 记录中，
+在已有的<span class="field">last_known_location</span>中现在有了一个表示地理坐标的convention。
 
-
-</p><h2 id="acknowledgements">10. Acknowledgements</h2>
+</p><h2 id="acknowledgements">10. 致谢</h2>
 
 <p>
  第一版PFIF基于的最初的数据模型归功于 CiviCRM team, David Geilhufe, and Kieran Lal.
