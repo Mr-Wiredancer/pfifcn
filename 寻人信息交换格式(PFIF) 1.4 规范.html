@@ -663,7 +663,7 @@ status = "information_sought" | "is_note_author" |
 </dd>
 <dt><span class="element">content</span></dt>
 <dd>
-  这个元素应该包含一个<span class="type">person</span>记录中的记录的可读HTML格式。
+  这个元素应该包含一个<span class="type">person</span>记录中信息的可读HTML格式。
   怎么样将内容格式化取决于应用。
 </dd>
 <dt><span class="element">source</span></dt>
@@ -705,66 +705,53 @@ status = "information_sought" | "is_note_author" |
 </dd>
 </dl>
 
-<p>An Atom note feed provides at least the following elements
-within each <span class="element">entry</span> element:
+<p>一个Atom note feed在每一个<span class="element">entry</span> 元素中至少提供以下元素：
 </p>
 
 <dl>
 <dt><span class="element">pfif:note</span></dt>
 <dd>
-    This element contains child elements for the fields of the
-    <a href="#note-records"><span class="type">note</span> record</a>.
+  这个元素包含了
+    <a href="#note-records"><span class="type">note</span> 记录</a>的字段作为子元素。
 </dd>
 <dt><span class="element">id</span></dt>
 <dd>
-    This element should contain a URI string consisting of the
-    scheme "pfif:" followed by the value of the
-    <span class="field">note_record_id</span> field.
+    这个元素应该包含由"pfif:"和
+    <span class="field">note_record_id</span>字段值组成的URI字符串。
 </dd>
 <dt><span class="element">title</span></dt>
 <dd>
-    This element should contain an excerpt
-    of the <span class="field">text</span> field.
+  这个元素应该包含<span class="field">text</span>字段的摘要。
 </dd>
 <dt><span class="element">author</span></dt>
 <dd>
-    This element should contain a <span class="element">name</span> element
-    containing the value of the <span class="field">author_name</span> field
-    and an <span class="element">email</span> element
-    containing the value of the <span class="field">author_email</span> field
-    in the <span class="type">note</span> record.
-</dd>
+  这个元素应该包含一个含有<span class="field">author_name</span> 的字段值的
+    <span class="element">name</span> 元素 和一个含有了<span class="field">author_email</span> 字段值的
+    <span class="element">email</span> 元素。这两个字段都属<span class="type">note</span>记录。
+  </dd>
 <dt><span class="element">updated</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">source_date</span> field
-    in the <span class="type">note</span> record.
+    这个元素应该包含了<span class="type">note</span> 记录中的
+    <span class="field">source_date</span>字段值。
 </dd>
 <dt><span class="element">content</span></dt>
-<dd>
-    This element should contain an HTML formatting of the
-    <span class="field">text</span> field
-    in the <span class="type">note</span> record.
-    It is up to the application to decide how to format the content.
-</dd>
+<dd> 这个元素应该包含一个<span class="type">note</span>记录中<span class="field">text</span> 字段的可读HTML格式。
+  怎么样将内容格式化取决于应用。</dd>
 </dl>
 
-<h2 id="rss">7. RSS feed specifications</h2>
+<h2 id="rss">7. RSS feed 规范</h2>
 
-<p>PFIF XML documents can be embedded into
-<a href="http://blogs.law.harvard.edu/tech/rss">RSS 2.0</a> feeds.
-(In RSS 2.0 terminology, this section defines an RSS 2.0 module.)
-The PFIF document should be specified using an XML namespace
-and embedded as an immediate child
-of the <span class="element">item</span> element.
+<p>PFIF XML文档可以嵌入到
+<a href="http://blogs.law.harvard.edu/tech/rss">RSS 2.0</a> feed中。
+(用RSS 2.0的术语来说，这个部分定义了一个RSS 2.0模块)
+这种PFIF文档应该用一个XML命名空间来指定，然后作为一个<span class="element">item</span> 元素的直系子元素嵌入。
 </p>
 
-<p>RSS 2.0 defines two main elements,
-<span class="element">channel</span> and <span class="element">item</span>,
-that are enclosed in a top-level <span class="element">rss</span> element.
-The top-level element should declare the PFIF namespace.
-The recommended prefix is <code>pfif</code>,
-so the top-level element should look like this:
+<p>RSS 2.0定义了两个主要的元素，
+<span class="element">channel</span> 和 <span class="element">item</span>,
+而包含它们的是一个最高级 <span class="element">rss</span> 元素。
+这个最高级元素应该声明PFIF的命名空间。
+推荐的前缀是<code>pfif</code>，所以最高级元素看起来应该像这样：
 </p>
 
 <pre>&lt;rss version="2.0" xmlns:pfif="http://zesty.ca/pfif/1.4"&gt;
@@ -772,191 +759,141 @@ so the top-level element should look like this:
 &lt;/rss&gt;</pre>
 
 <p>
-The rest of this section offers recommendations
-on how applications should populate the standard RSS elements
-so that the feed will make sense to existing feed-reading software.
-Nonetheless, the embedded PFIF document takes precedence
-over any redundant information that appears in RSS elements.
+  这个章节剩下的部分提供了推荐的做法，对于应用怎样填充标准RSS元素，以使得feed对于现有的feed-读取软件有意义。不过需要注意的是，嵌入的PFIF文档优先于RSS元素里的其它冗余信息。
 </p>
 
 <p>
-As in the preceding section,
-two kinds of PFIF RSS feeds are defined here:
-person feeds in which each item contains a person,
-and note feeds in which each item contains a note.
-</p>
+  像前一章节一样，这里定义了两种PFIFRSS feed：在每个item里都包含一个person的person feed, 和在每个item里都包含一个note的note feed。</p>
 
 <h3 id="rss-person">7.1. RSS person feeds</h3>
 
-<p>An RSS person feed provides at least the following elements
-within the <span class="element">channel</span> element:
+<p>一个 RSS person feed 在其<span class="element">channel</span> 元素里至少提供以下的元素：
 </p>
 
 <dl>
 <dt><span class="element">title</span></dt>
 <dd>
-    This element should contain the name of this feed,
-    which should include the title of the database or service
-    providing this feed.
+    这个元素应该包含这个feed的名字。
+  它应该包括提供这个feed的数据库或服务的名称。
 </dd>
 <dt><span class="element">description</span></dt>
 <dd>
-    This element should contain a phrase or sentence describing this feed.
-    This is the place to explain how this feed is produced, for example:
+    这个元素应该包含描述该feed的一个短语或一句话。
+  这里应该解释feed是怎么样被产生的，例如：
     "Scraped daily by FooMatic 2.3 from http://example.org/".
 </dd>
 <dt><span class="element">lastBuildDate</span></dt>
 <dd>
-    This element should contain the date and time in UTC
-    that this feed was last updated,
-    given in <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
-    date format, for example: "Sat, 07 Sep 2002 00:00:01 GMT".
+ 这个元素应该包含这个feed上一次被更新的世界标准时间，用<a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
+ 日期格式来表示，比如： "Sat, 07 Sep 2002 00:00:01 GMT".
 </dd>
 <dt><span class="element">link</span></dt>
 <dd>
-    This element should contain a URL to the website
-    that corresponds to the database or service providing this feed.
-</dd>
+  这个元素应该包含一个提供这个feed的数据库或服务的网站的URL地址。</dd>
 </dl>
 
-<p>An RSS person feed provides at least the following elements
-within each <span class="element">item</span> element:
+<p>一个RSS person feed应该在每个 <span class="element">item</span> 元素内提供至少以下元素：
 </p>
 
 <dl>
 <dt><span class="element">pfif:person</span></dt>
 <dd>
-    This element contains child elements for the fields of the
-    <a href="#person-records"><span class="type">person</span> record</a>,
-    as well as zero or more
-    <span class="element">pfif:note</span> elements.
-    A service wishing to provide a complete export
-    would include all the <span class="type">note</span> records
-    associated with the person here.
+      这个元素包含了代表<a href="#person-records"><span class="type">person</span> record</a>的字段的子元素，和0或多个<span class="element">pfif:note</span> 元素。
+  一个希望提供完整导出的服务应该包含所有跟这个person有关的 <span class="type">note</span>记录。
 </dd>
 <dt><span class="element">guid</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">person_record_id</span> field.
+ 
+    这个元素应该包含<span class="field">person_record_id</span>的字段值。
 </dd>
 <dt><span class="element">title</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">full_name</span> field.
+    这个元素应该包含 <span class="field">full_name</span> 的字段值。
 </dd>
 <dt><span class="element">author</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">author_email</span> field,
-    followed by a space and the value of the
-    <span class="field">author_name</span> field enclosed in parentheses.
+  这个元素包含的了包含了一个字符串。而该字符串是这样构成的：
+    <span class="field">author_email</span> 字段值后面加一个空格和
+    <span class="field">author_name</span>字段值，然后由一个小括号括起来。
 </dd>
 <dt><span class="element">pubDate</span></dt>
 <dd>
-    This element should contain the date in the
-    <span class="field">source_date</span> field
-    in the <span class="type">person</span> record,
-    converted to <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
-    date format, for example: "Sat, 07 Sep 2002 00:00:01 GMT".
-    The timezone MUST be GMT and the year MUST have four digits.
+  这个元素应该包含了<span class="type">person</span>记录中
+    <span class="field">source_date</span>的字段值，转换成<a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
+    时间格式，例如： "Sat, 07 Sep 2002 00:00:01 GMT"。时区必须是格林威治标准时间而年份必须是4为数字。
 </dd>
 <dt><span class="element">description</span></dt>
 <dd>
-    This element should contain a human-readable
-    HTML formatting of the information
-    in the <span class="type">person</span> record.
-    It is up to the application to decide how to format the description.
+    这个元素应该包含一个<span class="type">person</span>记录中信息的可读HTML格式。
+  怎么样将内容格式化取决于应用。
 </dd>
 <dt><span class="element">source</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">source_name</span> field.
+这个元素应该包含<span class="field">source_name</span>的字段值。
 </dd>
 <dt><span class="element">link</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">source_url</span> field.
+这个元素应该包含
+    <span class="field">source_url</span> 的字段值。
 </dd>
 </dl>
 
 <h3 id="rss-note">7.2. RSS note feeds</h3>
 
-<p>An RSS note feed provides at least the following elements
-within the <span class="element">channel</span> element:
+<p>一个RSS note feed在每个<span class="element">channel</span> 元素里提供至少下列元素：
 </p>
 
 <dl>
 <dt><span class="element">title</span></dt>
 <dd>
-    This element should contain the name of this feed.
-    This should include the title of the database or service
-    providing this feed,
-    followed by a more specific title that describes how the notes
-    were selected from the database or service.
-    For example, for a note feed about a particular person,
-    the title could be the title of the service
-    followed by the first name and last name of the person in question.
-</dd>
+      这个元素应该包含这个feed的名字。
+  它应该包括提供这个feed的数据库或服务的名称,后面跟一个更加具体的标题，来解释数据库或服务如何选择note。例如，对于一个关于特定人员的note feed, title应该是服务的名字加上目标人员的姓名。</dd>
 <dt><span class="element">description</span></dt>
 <dd>
-    This element should contain a phrase or sentence describing the feed.
-    This is the place to explain how the feed is produced, for example:
+        这个元素应该包含描述该feed的一个短语或一句话。
+  这里应该解释feed是怎么样被产生的，例如：
     "Scraped daily by FooMatic 2.3 from http://www.example.org/".
 </dd>
 <dt><span class="element">lastBuildDate</span></dt>
 <dd>
-    This element should contain the date and time in UTC
-    that this feed was last updated,
-    given in <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
-    date format, for example: "Sat, 07 Sep 2002 00:00:01 GMT".
-</dd>
+   这个元素应该包含这个feed上一次被更新的世界标准时间，用<a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
+ 日期格式来表示，比如： "Sat, 07 Sep 2002 00:00:01 GMT"。</dd>
 <dt><span class="element">link</span></dt>
 <dd>
-    This element should contain a URL to the website
-    that corresponds to the database or service providing this feed.
-    For a note feed about a particular person,
-    this link could point to the web page for that person's record.
+    这个元素应该包含一个提供这个feed的数据库或服务的网站的URL地址。
+    对于一个关于特定人员的note feed这个链接应该指向该人员记录的网页。
 </dd>
 </dl>
 
-<p>An RSS note feed provides at least the following elements
-within each <span class="element">item</span> element:
+<p>一个 RSS note feed在每个<span class="element">item</span>元素里提供至少以下元素：
 </p>
 
 <dl>
 <dt><span class="element">pfif:note</span></dt>
 <dd>
-    This element contains child elements for the fields of the
-    <a href="#note-records"><span class="type">note</span> record</a>.
+  这个元素包含了
+    <a href="#note-records"><span class="type">note</span> 记录</a>的字段作为子元素。
 </dd>
 <dt><span class="element">guid</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">note_record_id</span> field.
+这个元素包含了<span class="field">note_record_id</span> 的字段值。
 </dd>
 <dt><span class="element">author</span></dt>
 <dd>
-    This element should contain the value of the
-    <span class="field">author_email</span> field,
-    followed by a space and the value of
-    <span class="field">author_name</span> field enclosed in parentheses.
+    这个元素包含的了包含了一个字符串。而该字符串是这样构成的：
+    <span class="field">author_email</span> 字段值后面加一个空格和
+    <span class="field">author_name</span>字段值，然后由一个小括号括起来。
 </dd>
 <dt><span class="element">pubDate</span></dt>
 <dd>
-    This element should contain the date in the
-    <span class="field">source_date</span> field
-    in the <span class="type">note</span> record,
-    converted to <a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
-    date format, for example: "Sat, 07 Sep 2002 00:00:01 GMT".
-    The timezone MUST be GMT and the year MUST have four digits.
+    这个元素应该包含了<span class="type">note</span>记录中
+    <span class="field">source_date</span>的字段值，转换成<a href="http://www.ietf.org/rfc/rfc0822.txt">RFC 822</a>
+    时间格式，例如： "Sat, 07 Sep 2002 00:00:01 GMT"。时区必须是格林威治标准时间而年份必须是4为数字。
 </dd>
 <dt><span class="element">description</span></dt>
 <dd>
-    This element should contain an HTML formatting of the
-    <span class="field">text</span> field
-    in the <span class="type">note</span> record.
-    It is up to the application to decide how to format the description.
-</dd>
+  这个元素应该包含一个<span class="type">note</span>记录中<span class="field">text</span> 字段的可读HTML格式。
+  怎么样将内容格式化取决于应用。</dd>
 </dl>
 
 <h2 id="database">8. 建议的关系型数据库架构</h2>
